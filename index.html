@@ -1,13 +1,84 @@
+<!DOCTYPE html>
 <html>
-    <head>
-        <title>MM802 Mini Project</title>
-    </head>
-    <body>
-        <h3>MM802 Mini Project</h3>
-        <ul>
-        <li><a href="DataPreprocess.html"> Data Pre-Process </a></li>
-        <li><a href="MostViewedVideos.html"> Most Viewed Videos </a></li>
-        <li><a href="WhichCategoriesHaveMostTrendingVideos.html">Which Categories Have Most Trending Videos</a></li>
-        </ul>
-    </body>
+<title>W3.CSS Template</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="css/w3.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
+<script src="scripts/datamaps.world.min.js"></script>
+<script src="scripts/datamaps.all.min.js"></script>
+<style>
+    body {
+        font-family: "Raleway", sans-serif;
+        /* font-family: "Times New Roman", Georgia, Serif; */
+        }
+    h1,h2,h3,h4,h5,h6 {
+        font-family: "Playfair Display";
+        letter-spacing: 5px;
+    }
+</style>
+<body>
+
+<!-- Navbar (sit on top) -->
+<div class="w3-top">
+  <div class="w3-bar w3-red w3-padding w3-card" style="letter-spacing:4px;">
+    <a ref="#" class="w3-bar-item w3-button w3-text-white w3-hover-white">MM802 Mini Project</a>
+    <!-- <a href="#" class="w3-bar-item w3-button w3-padding-large">Link 1</a> -->
+    <!-- Right-sided navbar links. Hide them on small screens -->
+    <div class="w3-right w3-hide-small">
+      <span class="w3-bar-item w3-text-white w3-hover-red">By Atom & Yohannes</span>
+    </div>
+  </div>
+</div>
+
+<header class="w3-container w3-white w3-center" style="padding:128px 16px">
+    <h1 class="w3-margin w3-jumbo">MM802 Mini Project</h1>
+    <p class="w3-xlarge">Trending YouTube Video Data Visualization</p>
+    <div id="container" style=" position: relative; margin:auto; width: 800px; height: 400px;"></div>
+
+
+    <!-- <button class="w3-button w3-black w3-padding-large w3-large w3-margin-top">Get Started</button> -->
+</header>
+
+<script>
+        var map = new Datamap({
+           element: document.getElementById('container'),
+          
+           fills: {
+               'USA': '#1f77b4',
+               'CHN': '#d62728',
+               'GBR': '#8c564b',
+               'FRA': '#9467bd',
+               'DEU': '#2ca02c',
+               'CAN': '#ff7f0e',
+               // 'IND': '#e377c2',
+               // 'PAK': '#7f7f7f',
+               defaultFill: 'rgba(192,192,192,0.9)'
+           },
+           data: {
+               'USA': {fillKey: 'USA'},
+               'CHN': {
+                   fillKey: 'CHN',
+               },
+               'GBR': {fillKey: 'GBR'},
+               'FRA': {fillKey: 'FRA'},
+               'DEU': {fillKey: 'DEU'},
+               'CAN': {fillKey: 'CAN'},
+               // 'IND': {fillKey: 'IND'},       
+               // 'PAK': {fillKey: 'PAK'}
+           },
+           done: function(datamap) {
+            //    datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography) {
+            //        alert(geography.properties.name);
+            //    });
+               datamap.svg.select('.CAN').on('click', function(geography) {
+                    window.location.href = "CanadaData.html";
+               });
+           }
+       });
+   </script>
+
+
+</body>
 </html>
