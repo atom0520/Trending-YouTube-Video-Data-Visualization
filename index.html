@@ -17,6 +17,37 @@
         font-family: "Playfair Display";
         letter-spacing: 5px;
     }
+
+    .container {
+        width: 100%;
+        max-width: 480px;
+        /* min-width: 330px; */
+        background: #fff;
+        margin-left: auto;
+        margin-right: auto;
+        /* margin: 10 10 10 10; */
+        margin-top: 40px;
+        margin-bottom: 40px;
+        /* padding: 0px 0px 20px 0px; */
+    }
+
+    .vid-container {
+        position: relative;
+        padding-bottom: 52%;
+        padding-top: 30px; 
+        height: 0; 
+        background-color:lightgrey;
+    }
+
+    .vid-container iframe,
+    .vid-container object,
+    .vid-container embed {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
 </style>
 <body>
 
@@ -35,11 +66,25 @@
 <header class="w3-container w3-white w3-center" style="padding:128px 16px">
     <h1 class="w3-margin w3-jumbo">MM802 Mini Project</h1>
     <p class="w3-xlarge">Trending YouTube Video Data Visualization</p>
+    
+    <img style="position:absolute; z-index:0; width:528px; height:408px; transform: translate(-50%, 0);  left:50%;"  src="imgs/youtube_TV.jpg"></img>
+    <img style="position:absolute; z-index:8; height:96px; transform: translate(-400px, 192px);"  src="imgs/atom-character.gif"></img>
+    <img style="position:absolute; z-index:8; height:96px; transform: translate(340px, 192px);"  src="imgs/yohannes-character.gif"></img>
+    <div class="container"  style="padding:25px 0 60px 0">
+        <div class="vid-container">
+            <iframe id="vid_frame" src="http://youtube.com/embed/SWOEVxpuiqE?autoplay=1&rel=0&showinfo=0&autohide=1&controls=0" frameborder="0" height:"320px"></iframe>
+        </div>
+
+    </div>
+    
+
+
     <div id="container" style=" position: relative; margin:auto; width: 800px; height: 400px;"></div>
 
 
     <!-- <button class="w3-button w3-black w3-padding-large w3-large w3-margin-top">Get Started</button> -->
 </header>
+   
 <!-- <video width="320" height="240" controls>
     <source src="https://www.youtube.com/watch?v=WMGVltvFPyE" type="video/mp4">
 
