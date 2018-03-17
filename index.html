@@ -40,6 +40,15 @@
 
     <!-- <button class="w3-button w3-black w3-padding-large w3-large w3-margin-top">Get Started</button> -->
 </header>
+<!-- <video width="320" height="240" controls>
+    <source src="https://www.youtube.com/watch?v=WMGVltvFPyE" type="video/mp4">
+
+  Your browser does not support the video tag.
+</video> -->
+
+<!-- <iframe id="ytplayer" type="text/html" width="720" height="405"
+src="https://www.youtube.com/embed/?autoplay=1&showinfo=1&playlist=FlsCjmMhFmw,6ZfuNTqbHE8,TyHvyGVs42U&color=white&controls=2&theme=white"
+frameborder="0" allowfullscreen> -->
 
 <script>
         var map = new Datamap({
@@ -74,6 +83,14 @@
             //    });
                datamap.svg.select('.CAN').on('click', function(geography) {
                     window.location.href = "CanadaData.html";
+               });
+
+               datamap.svg.select('.CHN').on('mouseenter', function(geography) {
+                    // alert('mouseover');
+                    console.log('mouseenter');
+               });
+               datamap.svg.select('.CHN').on('mouseleave', function(geography) {
+                    console.log('mouseleave');
                });
            }
        });
