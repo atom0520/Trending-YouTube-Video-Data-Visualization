@@ -163,16 +163,6 @@
    }
   },
   {
-    "kind": "youtube#videoCategory",
-    "etag": "\"m2yskBQFythfE4irbTIeOgYYfBU/SalkJoBWq_smSEqiAx_qyri6Wa8\"",
-    "id": "29",
-    "snippet": {
-     "channelId": "UCBR8-60-B28hp2BmDPdntcQ",
-     "title": "Nonprofits & Activism",
-     "assignable": true
-    }
-   },
-  {
    "kind": "youtube#videoCategory",
    "etag": "\"ld9biNPKjAjgjV7EZ4EKeEGrhao/lL7uWDr_071CHxifjYG1tJrp4Uo\"",
    "id": "30",

@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="css/w3.css">
 <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
+
 <script src="scripts/datamaps.world.min.js"></script>
 <script src="scripts/datamaps.all.min.js"></script>
 <style>
@@ -48,6 +49,49 @@
         width: 100%;
         height: 100%;
     }
+
+    #world-globe{
+        filter: grayscale(50%);
+        opacity: 0.8;
+        
+    }
+
+    #world-globe:hover {
+        filter: grayscale(0%);
+        opacity: 1;
+    
+    }
+
+    #tooltip {
+        position: absolute;
+        width: auto;
+        height: auto;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        background-color: white;
+        /* -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;
+        border-radius: 10px; */
+        -webkit-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);
+        -mox-box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.4);
+        box-shadow: 1px 1px 1px rbga(0, 0, 0, 0.4);
+        border:1px solid rgba(128, 128, 128, 0.4);
+        pointer-events:none;
+        z-index:5;
+    }
+    #tooltip.hidden {
+        opacity: 0;
+    }
+    #tooltip p {
+        margin: 0;
+        font-family: sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 20px;
+
+    }
 </style>
 <body>
 
@@ -66,22 +110,48 @@
 
 <header class="w3-container w3-white w3-center" style="padding:128px 16px">
     <h1 class="w3-margin w3-jumbo">MM802 Mini Project</h1>
-    <p class="w3-xlarge">Trending YouTube Video Data Visualization</p>
-    
-    <img style="position:absolute; z-index:0; width:528px; height:408px; transform: translate(-50%, 0);  left:50%;"  src="imgs/youtube_TV.jpg"></img>
-    <img style="position:absolute; z-index:0; height:96px; transform: translate(-400px, 192px);"  src="imgs/atom-character.gif"></img>
-    <img style="position:absolute; z-index:0; height:96px; transform: translate(340px, 192px);"  src="imgs/yohannes-character.gif"></img>
-    <div class="container"  style="padding:25px 0 60px 0">
-        <div class="vid-container">
-            <iframe id="vid_frame" src="http://youtube.com/embed/SWOEVxpuiqE?autoplay=1&rel=0&showinfo=0&autohide=1&controls=0" frameborder="0" height:"320px"></iframe>
-        </div>
+    <p class="w3-xlarge" style="transform: translate(-12px, 0);">
+            <img style="height:96px; transform: translate(0, -28px);" src="imgs/youtube-logo.gif"></img>
+        Trending YouTube Video Data Visualization
+    </p>
 
+    <img style="position:absolute; z-index:0; height:96px; left:50%; transform: translate(-400px, 192px);"  src="imgs/atom-character.gif"></img>
+    <img style="position:absolute; z-index:0; height:96px; right:50%; transform: translate(400px, 192px);"  src="imgs/yohannes-character.gif"></img>
+    
+    <div class="container"  style="padding:25px 0 60px 0">
+        <img style="position:absolute; z-index:0; width:528px; height:408px; transform: translate(-50%, -41px);  left:50%;"  src="imgs/youtube_TV.jpg"></img>
+        
+        <div class="vid-container">
+            <iframe id="vid_frame" 
+                src="http://youtube.com/embed/SWOEVxpuiqE?autoplay=1&rel=0&showinfo=0&autohide=1&controls=0" 
+                frameborder="0" 
+                height:"320px">
+            </iframe>
+        </div>
     </div>
     
+    <br>
+    <br>
+    
+    <h3 class="w3-margin" id="choose-area-title">Choose an Area</h3>
+    <h5 class="w3-margin" style="color:lightcoral"><b>Click an area to view the corresponding video data</b></h5>
 
+    <img id="world-globe"
+         style="position:absolute; 
+                z-index:3; height:80px; 
+                left:50%; 
+                transform: translate(-336px, 232px);" 
+         src="imgs/globe.gif"
+       
+         >
+    </img>
+    <div id="tooltip" class="hidden">
+        <p >Globe</p>
+    </div>
 
-    <div id="container" style=" position: relative; margin:auto; width: 800px; height: 400px;"></div>
-
+    <div id="map-container" 
+        style=" position: relative; margin:auto; width: 800px; height: 400px;">
+    </div>
 
     <!-- <button class="w3-button w3-black w3-padding-large w3-large w3-margin-top">Get Started</button> -->
 </header>
@@ -97,29 +167,52 @@ src="https://www.youtube.com/embed/?autoplay=1&showinfo=1&playlist=FlsCjmMhFmw,6
 frameborder="0" allowfullscreen> -->
 
 <script>
+        console.log(d3.select("#world-globe"));
+        d3.select("#world-globe")
+            .on("mouseover", function (d) {
+                d3.select("#tooltip")
+                    .style("left", d3.event.pageX+16+'px')
+                    .style("top", d3.event.pageY+16+'px')
+                    .style("opacity", 1);
+                
+                document.getElementById("choose-area-title").innerHTML="Global Video Data";
+            })
+
+            .on("mousemove", function (d) {
+                d3.select("#tooltip")
+                    .style("left", d3.event.pageX+16+'px')
+                    .style("top", d3.event.pageY+16+'px')
+                    .style("opacity", 1);
+            })
+
+            .on("mouseout", function (d) {
+                d3.select("#tooltip").style("opacity", 0);
+
+                document.getElementById("choose-area-title").innerHTML="Choose an Area";
+            });
+
         var map = new Datamap({
-           element: document.getElementById('container'),
+           element: document.getElementById('map-container'),
           
            fills: {
                'USA': '#1f77b4',
-               'CHN': '#d62728',
-               'GBR': '#8c564b',
+               'CAN': '#d62728',
+               'GBR': '#ff7f0e',
                'FRA': '#9467bd',
                'DEU': '#2ca02c',
-               'CAN': '#ff7f0e',
+            //    'CHN': '#d62728',
                // 'IND': '#e377c2',
                // 'PAK': '#7f7f7f',
                defaultFill: 'rgba(192,192,192,0.9)'
            },
            data: {
-               'USA': {fillKey: 'USA'},
-               'CHN': {
-                   fillKey: 'CHN',
-               },
-               'GBR': {fillKey: 'GBR'},
-               'FRA': {fillKey: 'FRA'},
-               'DEU': {fillKey: 'DEU'},
-               'CAN': {fillKey: 'CAN'},
+                'CAN': {fillKey: 'CAN'},
+                'USA': {fillKey: 'USA'},
+                'GBR': {fillKey: 'GBR'},
+                'FRA': {fillKey: 'FRA'},
+                'DEU': {fillKey: 'DEU'},
+
+            //    'CHN': {fillKey: 'CHN'},
                // 'IND': {fillKey: 'IND'},       
                // 'PAK': {fillKey: 'PAK'}
            },
@@ -127,17 +220,56 @@ frameborder="0" allowfullscreen> -->
             //    datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography) {
             //        alert(geography.properties.name);
             //    });
-               datamap.svg.select('.CAN').on('click', function(geography) {
-                    window.location.href = "CanadaData.html";
-               });
+                datamap.svg.select('.CAN').on('click', function(geography) {
+                        window.location.href = "CanadaData.html";
+                });
 
-               datamap.svg.select('.CHN').on('mouseenter', function(geography) {
-                    // alert('mouseover');
-                    console.log('mouseenter');
-               });
-               datamap.svg.select('.CHN').on('mouseleave', function(geography) {
-                    console.log('mouseleave');
-               });
+                datamap.svg.select('.CAN').on('mouseenter', function(geography) {
+                    document.getElementById("choose-area-title").innerHTML="Canada Video Data";
+                });
+                datamap.svg.select('.CAN').on('mouseleave', function(geography) {
+                    document.getElementById("choose-area-title").innerHTML="Choose an Area";
+                });
+
+                datamap.svg.select('.USA').on('click', function(geography) {
+                        window.location.href = "USAData.html";
+                });
+                datamap.svg.select('.USA').on('mouseenter', function(geography) {
+                    document.getElementById("choose-area-title").innerHTML="America Video Data";
+                });
+                datamap.svg.select('.USA').on('mouseleave', function(geography) {
+                    document.getElementById("choose-area-title").innerHTML="Choose an Area";
+                });
+
+                datamap.svg.select('.GBR').on('click', function(geography) {
+                        window.location.href = "BritainData.html";
+                });
+                datamap.svg.select('.GBR').on('mouseenter', function(geography) {
+                    document.getElementById("choose-area-title").innerHTML="Britain Video Data";
+                });
+                datamap.svg.select('.GBR').on('mouseleave', function(geography) {
+                    document.getElementById("choose-area-title").innerHTML="Choose an Area";
+                });
+
+                datamap.svg.select('.FRA').on('click', function(geography) {
+                        window.location.href = "FranceData.html";
+                });
+                datamap.svg.select('.FRA').on('mouseenter', function(geography) {
+                    document.getElementById("choose-area-title").innerHTML="France Video Data";
+                });
+                datamap.svg.select('.FRA').on('mouseleave', function(geography) {
+                    document.getElementById("choose-area-title").innerHTML="Choose an Area";
+                });
+
+                datamap.svg.select('.DEU').on('click', function(geography) {
+                        window.location.href = "GermanyData.html";
+                });
+                datamap.svg.select('.DEU').on('mouseenter', function(geography) {
+                    document.getElementById("choose-area-title").innerHTML="Germany Video Data";
+                });
+                datamap.svg.select('.DEU').on('mouseleave', function(geography) {
+                    document.getElementById("choose-area-title").innerHTML="Germany an Area";
+                });
            }
        });
    </script>

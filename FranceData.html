@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html>
+<title>W3.CSS Template</title>
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="css/w3.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<!-- <script src="scripts/d3.min.js"></script> -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
+<script src="scripts/datamaps.world.min.js"></script>
+<script src="scripts/datamaps.all.min.js"></script>
+<!-- <script src="https://d3js.org/d3.v3.min.js"></script> -->
+
+<script src="https://d3js.org/d3.v4.js"></script>
+<!-- <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script> -->
+<script src="scripts/d3-tip.js"></script>
+<!-- <script src="https://d3js.org/d3-path.v1.min.js"></script>
+<script src="https://d3js.org/d3-shape.v1.min.js"></script> -->
+<script src="https://code.jquery.com/jquery-2.0.3.min.js"></script>
+
+<style>
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        /* font-family: "Times New Roman", Georgia, Serif; */
+        }
+    h1,h2,h3,h4,h5,h6 {
+        font-family: "Playfair Display";
+        letter-spacing: 5px;
+    }
+
+    /* Style tab links */
+    .tablink {
+        background-color: #555;
+        color: white;
+        float: left;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 14px 14px;
+        font-size: 17px;
+        width: 100%;
+        height: 64px;
+        margin-left: 0%;
+        margin-right: 0%;
+        margin-top: 0%;
+        margin-bottom: 0%;
+    }
+
+    /* .tabcontent {
+
+      display: none;
+      padding: 0px 20px;
+      height: 100%;
+    } */
+
+    img     {   width:128px;}
+    caption {   background-color:red; 
+                color:white;
+                border:1px dotted;
+                font:bold 22px arial; 
+                border-radius: 10px 10px 0px 0px; 
+                height:40px; 
+                margin: 0px 0px 4px 0px; 
+                vertical-align:middle;
+                }
+
+    th      {   background-color:red; 
+                color:white;
+                font:bold 18px arial;
+                height:40px;
+                padding:2px;
+                }
+    td      {   border:1px dotted; padding:2px; font-size:14px;}
+
+    .axis path,
+    .axis line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
+
+    .bar {
+      fill: orange;
+    }
+
+    .bar:hover {
+      fill: orangered ;
+    }
+
+    .x.axis path {
+      display: none;
+    }
+
+    .d3-tip {
+      line-height: 1;
+      font-weight: bold;
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      border-radius: 2px;
+    }
+
+    /* Creates a small triangle extender for the tooltip */
+    .d3-tip:after {
+      box-sizing: border-box;
+      display: inline;
+      font-size: 10px;
+      /* width: 100%; */
+      line-height: 1;
+      color: rgba(0, 0, 0, 0.8);
+      content: "\25BC";
+      position: absolute;
+      text-align: center;
+    }
+
+    /* Style northward tooltips differently */
+    .d3-tip.n:after {
+      margin: -1px -1px 0 0;
+      top: 100%;
+      left: 50%;
+    }
+
+    .container {
+
+        width: 100%;
+        /* max-width: 800px; */
+        min-width: 330px;
+        background: #fff;
+        margin-left: auto;
+        margin-right: auto;
+     
+        margin-top: 40px;
+        margin-bottom: 40px;
+        padding: 0px 40px 20px 40px;
+    }
+
+    .vid-container {
+        position: relative;
+        /* padding-bottom: 55%; */
+        margin-top: 59px; 
+        margin-left: auto;
+        margin-right: auto;
+        width: 640px;
+        height: 410px; 
+
+        background-color:lightgrey;
+    }
+    
+    .vid-container iframe,
+    .vid-container object,
+    .vid-container embed {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+       
+        height: 100%;
+    }
+
+    .vid-list-container {
+        width: 640px;
+        margin-left: auto;
+        margin-right: auto;
+        overflow-y: hidden;
+        overflow-x: scroll;
+        z-index: 8;
+        padding: 128px 0px 0px 0px;
+        /* margin-left:4%; */
+        /* padding-bottom: 20px; */
+        /* background-color:rgba(0, 0, 0, 0.8); */
+        border: 1px dotted grey;
+    }
+
+    .vid-list {
+        width: 1480px;
+        position: relative;
+        /* top:0;
+        left: 0; */
+        
+    }
+
+    .vid-item {
+
+        display: block;
+        width: 148px;
+        height: 128px;
+        float: left;
+        margin: 0;
+        padding: 10px 10px 10px 10px;
+        background-color:rgba(0, 0, 0, 0.8);
+    }
+
+    .thumb {
+        /*position: relative;*/
+        overflow:hidden;
+        height: 84px;
+    }
+
+    .thumb img {
+        width: 100%;
+        position: relative;
+        top: -13px;
+    }
+
+    .vid-item .desc {
+        color: white;
+        font-size: 15px;
+        margin-top:5px;
+        
+        white-space: nowrap; 
+        overflow: hidden;
+        text-overflow:ellipsis;
+    }
+  
+    .vid-item:hover {
+        background:darkgrey;
+        cursor: pointer;
+    }
+
+    .arrows {
+        position:relative;
+        width: 100%;
+    }
+
+    .arrow-left {
+        color: lightcoral;
+        position: absolute;
+        /* background: #777; */
+        /* padding: 16px; */
+        left: 50%;
+        transform:translate(-388px,0);
+        top: -108px;
+        cursor: pointer;
+        /* border: 1px solid white; */
+    }
+
+    .arrow-right {
+        color: lightcoral;
+        position: absolute;
+        /* background: #777; */
+        /* padding: 16px; */
+        right: 50%;
+        transform:translate(388px,0);
+        top: -108px;
+        cursor: pointer;
+        /* border: 1px solid white; */
+    }
+
+    .arrow-left:hover {
+        color: #CC181E;
+    }
+
+    .arrow-right:hover {
+        color: #CC181E;
+    }
+
+    #tooltip {
+        position: absolute;
+        width: 200px;
+        height: auto;
+        padding: 8px;
+        background-color: white;
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;
+        border-radius: 10px;
+        -webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+        -mox-box-shadow: 4px 4px 4px 10px rgba(0, 0, 0, 0.4);
+        box-shadow: 4px 4px 10px rbga(0, 0, 0, 0.4);
+        pointer-events:none;
+    }
+    #tooltip.hidden {
+        opacity: 0;
+    }
+    #tooltip p {
+        margin-top: 0;
+        margin-left: auto;
+        margin-right: auto;
+        font-family: sans-serif;
+        font-size: 16px;
+        line-height: 20px;
+
+    }
+    .arc {
+        opacity: 0.85;
+      }
+    .arc:hover {
+        opacity: 1;
+    }
+
+    .legend {
+        padding: 5px;
+        font: 10px sans-serif;
+        background: yellow;
+        box-shadow: 2px 2px 1px #888;
+    }
+</style>
+<body>
+  <!-- Navbar (sit on top) -->
+    <div class="w3-top">
+        <div class="w3-bar w3-red w3-padding w3-card" style="letter-spacing:4px;">
+            <!-- <span class="w3-bar-item w3-text-white w3-hover-red">MM802 Mini Project</span> -->
+            <!-- <a ref="https://www.google.com.hk/" class="w3-bar-item w3-button w3-text-white w3-hover-white"><img src="imgs/maplestory-icon.png"></img></a> -->
+            <a href="index.html" class="w3-bar-item w3-button w3-text-white w3-hover-white" style="width:38px; margin-top:-1px"><img src="imgs/maplestory-icon.png" style="position:absolute; width:32px;transform:translate(-12px,-5px)"></img>&nbsp</a>
+            <span class="w3-bar-item w3-text-white w3-hover-red" style="padding-left:8px;">
+                <i class="fa fa-hand-o-left" style="position:absolute; font-size:24px; transform:translate(0px,-2px)"></i>
+                &nbsp&nbsp&nbsp&nbspClick to Go Home
+            </span>
+
+            <!-- Right-sided navbar links. Hide them on small screens -->
+            <div class="w3-right w3-hide-small">
+                <span class="w3-bar-item w3-text-white w3-hover-red">MM802 Mini Project - Made By Atom & Yohannes</span>
+            </div>
+        </div>
+    </div>
+
+    <header class="w3-container w3-light-grey w3-center" style="padding:96px 0 32px 0;">
+        <h2 class="w3-margin ">France Trending YouTube Videos</h2>
+        <!-- <p class="w3-xlarge" >Canada Trending YouTube Video</p> -->
+        <!-- <button class="w3-button w3-black w3-padding-large w3-large w3-margin-top">Get Started</button> -->
+    </header>
+
+    <div class="w3-content" style="
+        max-width:800px; 
+        max-Height:256px; 
+        padding: 0 0 0 0;   
+        margin-top:40px;
+        margin-bottom:40px;
+        overflow-x: hidden;
+        overflow-y: scroll;"
+        >
+
+        <button class="tablink" 
+            onclick="openPage('MostViewed', this, '#f44336'); getMostViewedVideos();" 
+            id="defaultOpen">
+            Which videos get most number of views?
+        </button>
+        <button class="tablink" 
+            onclick="openPage('MostLiked', this, '#f44336'); getMostLikedVideos()">
+            Which videos get most number of likes?
+        </button>
+        <button class="tablink" 
+            onclick="openPage('MostDisliked', this, '#f44336'); getMostDislikedVideos()">
+            Which videos get most number of dislikes?
+        </button>
+        <button class="tablink" 
+            onclick="openPage('MostCommented', this, '#f44336'); getMostCommentedVideos()">
+            Which videos get most number of comments?
+        </button>
+        <button class="tablink" 
+            onclick="openPage('CategoryVideoNum', this, '#f44336'); getCategoryVideoNum()">
+            How many trending videos does each category have?
+        </button>
+        <button class="tablink" 
+            onclick="openPage('CategoryAverageViews', this, '#f44336'); getCategoryAverageViews()">
+            What's the average number of views of videos in each category?
+        </button>
+    </div>
+
+    <div class="w3-white w3-center">
+
+        <div class="container"  style="padding:0 0 0 0">
+            <!-- <h1 id="tabtitle">Most Viewed Videos</h1> -->
+            <h1 id="tabtitle" >&nbsp</h1>
+        </div>
+
+        <h4 id='video-heading' style="margin: 0 0 -10px 0">
+            <!-- <img id="vid-medal" style="position:absolute; width:32px; transform:translate(-38px,0)" src="imgs/bronze-medal.png" ></img> -->
+            <img id="vid-medal" style="position:absolute; width:32px; transform:translate(-38px,0)" src="" ></img>
+
+            <b id="vid-rank" style="color:#CC181E;font-size:32px; padding-left:0px">&nbsp</b>
+            <b id="vid-title">&nbsp</b>
+        </h4>
+          
+        <div id="video-player" class="container">
+            <img style="position:absolute; z-index:0; height:596px; width:704px; transform: translate(-50%, -58px);  left:50%;"  src="imgs/youtube_TV.jpg"></img>
+
+            <div class="vid-container">
+                <iframe id="vid_frame" src="" frameborder="0"></iframe>
+            </div>
+
+            <div class="vid-list-container">
+                <div class="vid-list">                  
+                    <div class="vid-item" onClick="">
+                        <div class="thumb"><img src=""></div>
+                        <div class="desc"></div>
+                    </div>
+                    <div class="vid-item" onClick="">
+                        <div class="thumb"><img src=""></div>
+                        <div class="desc"></div>
+                    </div>
+                    <div class="vid-item" onClick="">
+                        <div class="thumb"><img src=""></div>
+                        <div class="desc"></div>
+                    </div>
+                    <div class="vid-item" onClick="">
+                        <div class="thumb"><img src=""></div>
+                        <div class="desc"></div>
+                    </div>
+                    <div class="vid-item" onClick="">
+                        <div class="thumb"><img src=""></div>
+                        <div class="desc"></div>
+                    </div>
+                    <div class="vid-item" onClick="">
+                        <div class="thumb"><img src=""></div>
+                        <div class="desc"></div>
+                    </div>
+                    <div class="vid-item" onClick="">
+                        <div class="thumb"><img src=""></div>
+                        <div class="desc"></div>
+                    </div>
+                    <div class="vid-item" onClick="">
+                        <div class="thumb"><img src=""></div>
+                        <div class="desc"></div>
+                    </div>
+                    <div class="vid-item" onClick="">
+                        <div class="thumb"><img src=""></div>
+                        <div class="desc"></div>
+                    </div>
+                    <div class="vid-item" onClick="">
+                        <div class="thumb"><img src=""></div>
+                        <div class="desc"></div>
+                    </div>
+                </div>          
+            </div>
+        
+            <div class="arrows">
+                <div class="arrow-left"><i class="fa fa-chevron-circle-left" style="font-size:48px"></i></div>
+                <div class="arrow-right"><i class="fa fa-chevron-circle-right" style="font-size:48px"></i></div>        
+            </div>
+        </div>
+
+        <table id="table" align="center" style="padding:0 0 80px 0">
+
+        </table>
+    
+        <svg id="bar-graph">
+    
+        </svg>
+
+        <br>
+
+        <svg id="pie-graph" style="margin:20px 0px 20px 0">
+    
+        </svg>
+        
+        <div id="tooltip" class="hidden" >
+            <p style="margin-bottom:8px">
+                <strong id="pie-graph-tip-title">Important Label Heading</strong>
+            </p>
+            <p style="margin-bottom:4px">
+                <span id="pie-graph-tip-value">100</span>
+            </p>
+            <p style="margin-bottom:0px">
+                <span id="pie-graph-tip-percent">50</span>
+            </p>
+        </div>
+    </div>
+
+    <script async>
+
+        var videoDataFilename = "data/video_data_fr.csv";
+        var categoryDataFilename = "data/category_data_fr.json";
+
+        var data=null;
+        var categoryMap = null;
+
+        var currPageName=null;
+        var selectedVideoIndex = 0; 
+
+        var mostViewed=null;
+        var mostLiked=null;
+        var mostDisliked = null;
+        var mostCommented = null;
+        var categoryVideoNum = null;
+        var categoryAverageViews = null;
+
+        function loadVideoData(callback){
+            d3.csv(videoDataFilename,
+                function(d){
+                    d.views = +d.views;
+                    d.likes = +d.likes;
+                    d.dislikes = +d.dislikes;
+                    d.comment_count = +d.comment_count;
+                    return d;
+                },
+                function(error,d){
+                    data=d;
+                    if(callback!=null){
+                        callback();
+                    }
+                });
+        }
+        
+        function loadCategoryData(callback){
+            console.log("loadCategoryData");
+            d3.json(categoryDataFilename, function(root) {
+                console.log(root);
+                var categoryItems = root.items;
+      
+                categoryMap={};
+                for(var i=0;i<categoryItems.length;i+=1){
+                    var categoryId = categoryItems[i].id;
+                    var categoryTitle = categoryItems[i].snippet.title;
+                    categoryMap[categoryId]={};
+                    categoryMap[categoryId].title = categoryTitle;
+                    categoryMap[categoryId].video_num = 0;
+                    categoryMap[categoryId].views = 0;
+                }
+                console.log(categoryMap);
+                if(callback!=null){
+                    callback();
+                }
+            });
+        }
+
+        function deduplicateSortedData(dataSorted,i,videoIdSet,dataSortedDeduplicated){
+            // console.log("checkDuplicate");
+            // console.log(i);
+            var videoId = dataSorted[i].video_id;
+            var duplicate = false;
+            for(var j=0;j<videoIdSet.length;j+=1){
+                if(videoIdSet[j]==videoId){
+                    duplicate=true;
+                    break;
+                }
+            }
+            if(!duplicate){
+                dataSortedDeduplicated.push(dataSorted[i]);
+                videoIdSet.push(videoId);
+            }
+
+            if(videoIdSet.length<10){
+                i=i+1;
+                setTimeout(
+                    function(){deduplicateSortedData(dataSorted,i,videoIdSet,dataSortedDeduplicated);},
+                    10);
+            }else{
+                delete videoIdSet;
+                
+                switch(currPageName){
+                    case "MostViewed":
+                        mostViewed = dataSortedDeduplicated.slice(0,10);
+                        break;
+                    case "MostLiked":
+                        mostLiked = dataSortedDeduplicated.slice(0,10);
+                        break;
+                    case "MostDisliked":
+                        mostDisliked = dataSortedDeduplicated.slice(0,10);
+                        break;
+                    case "MostCommented":
+                        mostCommented = dataSortedDeduplicated.slice(0,10);
+                        break;
+                }
+
+                loadVideoPlayer();
+                loadTable();
+                loadBarGraph();
+            }
+        }
+
+        function getMostViewedVideos(){
+            
+            if(data==null){
+                loadVideoData(getMostViewedVideos);
+                return;
+            }
+
+            if(mostViewed==null){
+                dataSorted = data.slice(0)
+                dataSorted.sort(
+                    function(a,b){
+                        return b.views-a.views;
+                    });
+
+                videoIdSet = [];
+                dataSortedDeduplicated=[];
+           
+                deduplicateSortedData(dataSorted,0,videoIdSet,dataSortedDeduplicated);
+            }else{
+                loadVideoPlayer();
+                loadTable();
+                loadBarGraph();
+            }
+        }
+
+        function getMostLikedVideos(){
+            if(data==null){
+                loadVideoData(getMostLikedVideos);
+                return;
+            }
+
+            if(mostLiked==null){
+                dataSorted = data.slice(0)
+                dataSorted.sort(
+                    function(a,b){
+                        return b.likes-a.likes;
+                    });
+
+                videoIdSet = [];
+                dataSortedDeduplicated=[];
+           
+                deduplicateSortedData(dataSorted,0,videoIdSet,dataSortedDeduplicated);
+            }else{
+                loadVideoPlayer();
+                loadTable();
+                loadBarGraph();
+            }
+        }
+
+        function getMostDislikedVideos(){
+            if(data==null){
+                loadVideoData(getMostDislikedVideos);
+                return;
+            }
+
+            if(mostDisliked==null){
+                dataSorted = data.slice(0)
+                dataSorted.sort(
+                    function(a,b){
+                        return b.dislikes-a.dislikes;
+                    });
+
+                videoIdSet = [];
+                dataSortedDeduplicated=[];
+           
+                deduplicateSortedData(dataSorted,0,videoIdSet,dataSortedDeduplicated);
+            }else{
+                loadVideoPlayer();
+                loadTable();
+                loadBarGraph();
+            }
+        }
+        
+        function getMostCommentedVideos(){
+            console.log("getMostCommentedVideos");
+            if(data==null){
+                loadVideoData(getMostCommentedVideos);
+                return;
+            }
+
+            if(mostCommented==null){
+                dataSorted = data.slice(0)
+                dataSorted.sort(
+                    function(a,b){
+                        return b.comment_count-a.comment_count;
+                    });
+
+                videoIdSet = [];
+                dataSortedDeduplicated=[];
+           
+                deduplicateSortedData(dataSorted,0,videoIdSet,dataSortedDeduplicated);
+            }else{
+                loadVideoPlayer();
+                loadTable();
+                loadBarGraph();
+            }
+        }
+
+        function getCategoryVideoNum(onlyGetData){
+            if(data==null){
+                loadVideoData(getMostVideosCategories);
+                return;
+            }
+            
+            if(categoryMap==null){
+                loadCategoryData(getMostVideosCategories);
+                return;
+            }
+            
+            if(categoryVideoNum==null){
+                for(var i=0; i<data.length; i+=1){
+                    var categoryId = data[i].category_id;
+                    if(categoryMap.hasOwnProperty(categoryId)){
+                        categoryMap[data[i].category_id].video_num += 1;
+                    }else{
+                        console.log("missing category id key: "+categoryId);
+                    }
+                }
+
+                categoryVideoNum = [];
+                for(var key in categoryMap){
+                    if(categoryMap.hasOwnProperty(key) && categoryMap[key].video_num!=0){
+                        categoryVideoNum.push({
+                            id:key,
+                            title:categoryMap[key].title,
+                            video_num:categoryMap[key].video_num,
+                            video_num_percent:Math.round( categoryMap[key].video_num/data.length * 1000 ) / 10
+                            
+                        });
+                    }
+                }
+
+                categoryVideoNum.sort(
+                    function(a,b){
+                        return b.video_num - a.video_num;
+                    });
+            }
+            
+            if(!onlyGetData){
+                loadBarGraph(1);
+                loadPieGraph();
+            }
+        }
+
+        function getCategoryAverageViews(){
+            console.log("getCategoryAverageViews");
+            // if(data==null){
+            //     loadVideoData(getMostVideosCategories);
+            //     return;
+            // }
+
+            // if(categoryMap==null){
+            //     loadCategoryData(getMostVideosCategories);
+            //     return;
+            // }
+            
+            if(categoryVideoNum==null){
+                getCategoryVideoNum(true);
+                getCategoryAverageViews();
+                return;
+            }
+
+            if(categoryAverageViews==null){
+                for(var i=0; i<data.length; i+=1){
+                    var categoryId = data[i].category_id;
+                    if(categoryMap.hasOwnProperty(categoryId)){
+                        categoryMap[data[i].category_id].views += data[i].views;
+                    }else{
+                        console.log("missing category id key: "+categoryId);
+                    }
+                }
+
+                categoryAverageViews = [];
+                for(var key in categoryMap){
+                    if(categoryMap.hasOwnProperty(key) && categoryMap[key].views!=0){
+                        categoryAverageViews.push({
+                            id:key,
+                            title:categoryMap[key].title,
+                            average_views:Math.round(categoryMap[key].views/categoryMap[key].video_num * 10) / 10
+                        });
+                    }
+                }
+
+                categoryAverageViews.sort(
+                    function(a,b){
+                        return b.average_views - a.average_views;
+                    });
+                console.log(categoryAverageViews);
+            }
+            
+            loadBarGraph(1);
+            loadPieGraph();
+        }
+
+        function onClickVideoThumbnail(index){
+            
+            var topVideoData=getCurrPageData();
+
+            var videoId = topVideoData[index].video_id;
+
+            document.getElementById('vid_frame').src="http://youtube.com/embed/"+videoId+"?autoplay=1&rel=0&showinfo=0&autohide=1";
+                       
+            var vidItems = document.getElementsByClassName("vid-item");
+            vidItems = Array.prototype.slice.call(vidItems);
+            
+            vidItems[selectedVideoIndex].style.backgroundColor = "rgba(0, 0, 0, 0.8)";
+
+            selectedVideoIndex = index;
+
+            vidItems[selectedVideoIndex].style.backgroundColor = "rgba(80, 80, 80, 0.8)";
+
+            document.getElementById('vid-title').innerHTML = topVideoData[index].title;
+            document.getElementById('vid-rank').innerHTML = "No."+(index+1)+" ";
+            if(index==0){
+                document.getElementById('vid-medal').setAttribute("src","imgs/gold-medal.png");
+            }else if(index==1){
+                document.getElementById('vid-medal').setAttribute("src","imgs/silver-medal.png");
+            }else if(index==2){
+                document.getElementById('vid-medal').setAttribute("src","imgs/bronze-medal.png");
+            }else{
+                document.getElementById('vid-medal').setAttribute("src","");
+            }
+            
+        }
+        
+        function getCurrPageData(){
+            switch(currPageName){
+                case "MostViewed":
+                    return mostViewed;
+                    break;
+                case "MostLiked":
+                    return mostLiked;
+                    break;
+                case "MostDisliked":
+                    return mostDisliked;
+                    break;
+                case "MostCommented":
+                    return mostCommented;
+                    break;
+                case "CategoryVideoNum":
+                    return categoryVideoNum;
+                break;
+                case "CategoryAverageViews":
+                    return categoryAverageViews;
+                break;
+            }
+        }
+        
+        function loadVideoPlayer(){
+            console.log("loadVideoPlayer");
+
+            var topVideoData=getCurrPageData();
+            console.log(topVideoData);
+            console.log(currPageName);
+            var vidItems = document.getElementsByClassName("vid-item");
+
+            for(var i=0;i<vidItems.length;i+=1){
+                var vidItem = vidItems[i];
+
+                vidItem.setAttribute("onClick","onClickVideoThumbnail("+i+")");
+                
+                for (var j = 0; j < vidItem.childNodes.length; j++) {
+                    if (vidItem.childNodes[j].className == "thumb") {
+                        var node = vidItem.childNodes[j];
+                        
+                        node.childNodes[0].src=topVideoData[i].thumbnail_link;
+                        break;
+                    }        
+                }
+                
+                for (var j = 0; j < vidItem.childNodes.length; j++) {
+                    if (vidItem.childNodes[j].className == "desc") {
+                        var node = vidItem.childNodes[j];
+                        node.innerHTML=topVideoData[i].title;
+                        break;
+                    }        
+                }
+                
+                onClickVideoThumbnail(0);
+            }
+        }
+
+        function loadTable(){
+            
+            if(categoryMap==null){
+                loadCategoryData(loadTable);
+                return;
+            }
+
+            var topVideoData = getCurrPageData();
+
+            var tableElement = document.getElementById("table");
+            while (tableElement.firstChild) {
+                tableElement.removeChild(tableElement.firstChild);
+            }
+
+            var table = $("#table")
+
+            table.append($("<caption></caption>").html("Most Viewed Videos"))
+            var thead = $("<thead></thead>");
+            thead.append($("<th></th>").html("Rank"))
+            thead.append($("<th></th>").html("Image"))
+            thead.append($("<th></th>").html("Title"))
+            thead.append($("<th></th>").html("Category"))
+
+            switch(currPageName){
+                case "MostViewed":
+                    thead.append($("<th></th>").html("#Views"))
+                    break;
+                case "MostLiked":
+                    thead.append($("<th></th>").html("#Likes"))
+                    break;
+                case "MostDisliked":
+                    thead.append($("<th></th>").html("#Dislikes"))
+                    break;
+                case "MostCommented":
+                    thead.append($("<th></th>").html("#Comments"))
+                    break;
+            }
+
+            // thead.append($("<th></th>").html("Url"))
+   
+            table.append(thead);
+            table.append($("<tbody></tbody>"))
+
+            for(var i=0;i<topVideoData.length;i+=1){
+                var tr = $("<tr></tr>");
+    
+                tr.append($("<td style='text-align: center;'></td>").html(i+1));
+
+                var img = $('<img />').attr("src", topVideoData[i].thumbnail_link);
+                tr.append($("<td></td>").append(img));
+                
+                tr.append($("<td style='font-size:14px;'></td>").html(topVideoData[i].title));
+
+                tr.append($("<td></td>").html(categoryMap[topVideoData[i].category_id].title));
+
+                switch(currPageName){
+                case "MostViewed":
+                    tr.append($("<td></td>").html(topVideoData[i].views));
+                    break;
+                case "MostLiked":
+                    tr.append($("<td></td>").html(topVideoData[i].likes));
+                    break;
+                case "MostDisliked":
+                    tr.append($("<td></td>").html(topVideoData[i].dislikes));
+                    break;
+                case "MostCommented":
+                    tr.append($("<td></td>").html(topVideoData[i].comment_count));
+                    break;
+                }
+                
+                // var url = $("<a>").attr("href","https://www.youtube.com/watch?v="+topVideoData[i].video_id);
+                // url.html("https://www.youtube.com/watch?v="+topVideoData[i].video_id);
+                // tr.append($("<td style='font-size:14px;'></td>").append(url));
+        
+
+                $("tbody").append(tr);
+            }
+
+        }
+
+        function loadBarGraph(barType){
+            console.log("loadBarGraph");
+
+            var graphData=getCurrPageData();
+            
+
+            if(barType){
+                console.log(graphData);
+                var margin = {top: 40, right: 160, bottom: 60, left: 160},
+                width = 960 - margin.left - margin.right,
+                height = 960 - margin.top - margin.bottom;
+
+                var formatPercent = d3.format(".0%");
+
+                var x = d3.scaleBand()
+                        .rangeRound([20, height])
+                        .padding(0.1);
+
+                var y = d3.scaleLinear()
+                    .range([0, width]);
+
+                var xAxis = d3.axisLeft(x);
+                var yAxis = d3.axisTop(y).tickFormat(function(d) { return Math.round(d); });
+
+                var tipTextFunc;
+                switch(currPageName){
+                    case "CategoryVideoNum":
+                        tipTextFunc=function(d) {
+                            return "<span style='color:white'>" + d.title+ "</span>"+"<br><br>"+
+                            "<strong>#Trending Video Num: </strong> <span style='color:yellow'>" + d.video_num + "</span>";
+                        }
+                    break;
+                    case "CategoryAverageViews":
+                        tipTextFunc=function(d) {
+                            return "<span style='color:white'>" + d.title+ "</span>"+"<br><br>"+
+                            "<strong>Average #Views: </strong> <span style='color:yellow'>" + d.average_views + "</span>";
+                        }
+                    break;
+                }
+
+                var tip = d3.tip()
+                .attr('class', 'd3-tip')
+                .offset([-10, 0])
+                .html(tipTextFunc)
+
+                var barGraphElement = document.getElementById("bar-graph");
+                while (barGraphElement.firstChild) {
+                    barGraphElement.removeChild(barGraphElement.firstChild);
+                }
+
+                var svg = d3.select("#bar-graph")
+                    .attr("width", width + margin.left + margin.right)
+                    .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+                svg.call(tip);
+
+                x.domain(graphData.map(function(d) { return d.title; }));
+
+                switch(currPageName){
+                    case "CategoryVideoNum":
+                        y.domain([0, d3.max(graphData, function(d) { return d.video_num; })]);
+                    break;
+                    case "CategoryAverageViews":
+                        y.domain([0, d3.max(graphData, function(d) { return d.average_views; })]);
+                    break;
+                }
+
+                svg.append("g")
+                    .attr("class", "x axis")
+                    // .attr("transform", "translate(0," + height + ")")
+                    .call(xAxis);
+
+                svg.select(".x.axis")
+                    .selectAll("text")
+                    // .attr("transform"," translate(0,15) rotate(-30)")
+                    .style("font-size","12px");
+
+                var yAxisText;
+                switch(currPageName){
+                    case "CategoryVideoNum":
+                        yAxisText = "Trending Video Number";
+                    break;
+                    case "CategoryAverageViews":
+                        yAxisText = "Average Number of Views";
+                    break;
+                }
+
+                svg.append("g")
+                    .attr("class", "y axis")
+                    .call(yAxis)
+                
+                svg.append("text")
+                    .attr("x", width)
+                    .attr("y", 6)
+                    .attr("dy", ".71em")
+                    .style("text-anchor", "end")
+                    .text(yAxisText);
+
+                svg.selectAll(".bar")
+                    .data(graphData)
+                .enter().append("rect")
+                    .attr("class", "bar")
+                    .attr("y", function(d) { return x(d.title); })
+                    .attr("height", x.bandwidth())
+
+                    .attr("x", 0)
+                    .attr("width", function(d) { 
+                        switch(currPageName){
+                            case "CategoryVideoNum":
+                                return y(d.video_num); 
+                            break;
+                            case "CategoryAverageViews":
+                                console.log(d);
+                                console.log(d.average_views);
+                                console.log( y(d.average_views));
+                                return y(d.average_views); 
+                            break;
+                        }
+                    })
+                    .on('mouseover', tip.show)
+                    .on('mouseout', tip.hide)
+                    return;
+            }
+
+            var margin = {top: 20, right: 20, bottom: 40, left: 20},
+            width = 960 - margin.left - margin.right,
+            height = 720 - margin.top - margin.bottom;
+
+            var formatPercent = d3.format(".0%");
+
+            var x = d3.scaleBand()
+                    .rangeRound([20, width])
+                    .padding(0.1);
+                    
+            var y = d3.scaleLinear()
+                .range([height, 0]);
+
+            var xAxis = d3.axisBottom(x);
+            var yAxis = d3.axisLeft(y).tickFormat(function(d) { return Math.round(d); });
+
+            var tip = d3.tip()
+            .attr('class', 'd3-tip')
+            .offset([-10, 0])
+            .html(function(d) {
+                //return "<strong>Views:</strong> <span style='color:red'>" + d.views + "</span>";
+                return "<span style='color:white'>" + d.title+ "</span>"+"<br><br>"+
+                "<strong>#Views:</strong> <span style='color:yellow'>" + d.views + "</span>";
+            })
+            
+            //var svg = d3.select("#MostViewed").append("svg")
+            var barGraphElement = document.getElementById("bar-graph");
+            while (barGraphElement.firstChild) {
+                barGraphElement.removeChild(barGraphElement.firstChild);
+            }
+
+            var svg = d3.select("#bar-graph")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            svg.call(tip);
+
+            x.domain(graphData.map(function(d) { return d.video_id; }));
+
+            switch(currPageName){
+                case "MostViewed":
+                    y.domain([0, d3.max(graphData, function(d) { return d.views; })]);
+                    break;
+                case "MostLiked":
+                    y.domain([0, d3.max(graphData, function(d) { return d.likes; })]);
+                    break;
+                case "MostDisliked":
+                    y.domain([0, d3.max(graphData, function(d) { return d.dislikes; })]);
+                    break;
+                case "MostCommented":
+                    y.domain([0, d3.max(graphData, function(d) { return d.comment_count; })]);
+                    break;
+                }
+            
+            svg.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(xAxis);
+            
+            svg.select(".x.axis")
+                .selectAll("text")
+                // .attr("transform"," translate(0,15) rotate(-30)")
+                .style("font-size","12px");
+
+            var yAxisText;
+            switch(currPageName){
+            case "MostViewed":
+                yAxisText = "Number of Views";
+                break;
+            case "MostLiked":
+                yAxisText = "Number of Likes";
+                break;
+            case "MostDisliked":
+                yAxisText = "Number of Dislikes";
+                break;
+            case "MostCommented":
+                yAxisText = "Number of Comments";
+                break;
+            }
+
+            svg.append("g")
+                .attr("class", "y axis")
+                .call(yAxis)
+
+            svg.append("text")
+                .attr("transform", "rotate(-90)")
+                .attr("y", 6)
+                .attr("dy", ".71em")
+                .style("text-anchor", "end")
+                .text(yAxisText);
+
+            svg.selectAll(".bar")
+                .data(graphData)
+            .enter().append("rect")
+                .attr("class", "bar")
+                .attr("x", function(d) { return x(d.video_id); })
+                .attr("width", x.bandwidth())
+        
+                .attr("y", function(d) { 
+                        switch(currPageName){
+                            case "MostViewed":
+                                return y(d.views); 
+                                break;
+                            case "MostLiked":
+                                return y(d.likes); 
+                                break;
+                            case "MostDisliked":
+                                return y(d.dislikes); 
+                                break;
+                            case "MostCommented":
+                                return y(d.comment_count); 
+                                break;
+                        }
+                    }
+                )
+                .attr("height", function(d) { 
+                    switch(currPageName){
+                        case "MostViewed":
+                            return height - y(d.views); 
+                            break;
+                        case "MostLiked":
+                            return height - y(d.likes); 
+                            break;
+                        case "MostDisliked":
+                            return height - y(d.dislikes); 
+                            break;
+                        case "MostCommented":
+                            return height - y(d.comment_count); 
+                            break;
+                    }
+                })
+                .on('mouseover', tip.show)
+                .on('mouseout', tip.hide)
+        }
+
+        function loadPieGraph(){
+            console.log("loadPieGraph");
+
+            var graphData=getCurrPageData();
+            var pieGraphElement = document.getElementById("pie-graph");
+                while (pieGraphElement.firstChild) {
+                    pieGraphElement.removeChild(pieGraphElement.firstChild);
+            }
+
+            var width = 900,
+                height = 480;
+
+            var outerRadius = height / 2;
+            var innerRadius = 0;
+            var arc = d3.arc()
+                .innerRadius(innerRadius)
+                .outerRadius(outerRadius);
+
+            var labelArc = d3.arc()
+                .outerRadius(outerRadius-64)
+                .innerRadius(outerRadius-64)
+
+            var pie = d3.pie()
+                .value(function(d) {
+                    switch(currPageName){
+                        case "CategoryVideoNum":
+                            return d.video_num; 
+                        break;
+                        case "CategoryAverageViews":
+                            return d.average_views; 
+                        break;
+                    }
+                })
+                .padAngle(.01);;
+
+            var color = d3.scaleOrdinal(d3.schemeCategory20);;
+
+            // console.log(color);
+            // Create SVG element
+            var svg = d3.select("#pie-graph")
+                .attr("width", width)
+                .attr("height", height)
+                .attr("transform", "translate(" + 128 + "," + 0 + ")");
+
+            // Set up groups
+            var mousOverCallback;
+            switch(currPageName){
+                case "CategoryVideoNum":
+                    mousOverCallback = function (d) {
+                        d3.select("#tooltip")
+                            .style("left", d3.event.pageX-96+'px')
+                            .style("top", d3.event.pageY-96+'px')
+                            .style("opacity", 1);
+
+                        d3.select("#pie-graph-tip-title")
+                            .text(d.data.title);
+
+                        d3.select("#pie-graph-tip-value")
+                            .text('#Trending Videos: '+d.data.video_num);
+
+                        d3.select("#pie-graph-tip-percent")
+                            .text('Percent: '+d.data.video_num_percent+"%");
+                    }
+                break;
+                case "CategoryAverageViews":
+                    mousOverCallback = function (d) {
+                        d3.select("#tooltip")
+                            .style("left", d3.event.pageX-96+'px')
+                            .style("top", d3.event.pageY-96+'px')
+                            .style("opacity", 1);
+
+                        d3.select("#pie-graph-tip-title")
+                            .text(d.data.title);
+                        d3.select("#pie-graph-tip-value")
+                            .text('Average #Views: '+d.data.average_views);
+                        d3.select("#pie-graph-tip-percent")
+                            .text('');
+                    }
+                break;
+            }
+             
+            var arcs = svg.selectAll("g.arc")
+                .data(pie(graphData))
+                .enter()
+                .append("g")
+                .attr("class", "arc")
+                // .style("padding","2px 2px 2px 2px")
+                .attr("transform", "translate(" + outerRadius + "," + outerRadius + ")")
+                .on("mouseover", mousOverCallback)
+                .on("mousemove", function (d) {
+
+                    d3.select("#tooltip")
+                    .style("left", d3.event.pageX-96+'px')
+                    .style("top", d3.event.pageY-96+'px')
+                        .style("opacity", 1);
+
+                    // d3.select("#pie-graph-tip-title")
+                    //     .text(d.data.title);
+
+                    // d3.select("#pie-graph-tip-value")
+                    //     .text('#Trending Videos:'+d.data.video_num);
+                })
+                
+                .on("mouseout", function () {
+                    d3.select("#tooltip")
+                        .style("opacity", 0);
+                });
+
+            
+            arcs.append("path")
+                .attr("fill", function (d, i) {             
+                        return color(i);
+                    })
+                .attr("d", arc);
+
+            // arcs.append("text")
+            //     .style("font-weight", "bold")
+            //     .style("color", "white")
+            //     .attr("transform", function (d) {
+            //         return "translate(" + labelArc.centroid(d) + ")";
+            //     })
+            //     .attr("text-anchor", "middle")
+            //     .text(function (d) {
+            //         return d.data.id;
+            //     });  
+
+            // add legend   
+            var legend = svg.append("g")
+                .attr("class", "legend")
+                .attr("x", width - 96)
+                .attr("y", 25)
+                .attr("height", 100)
+                .attr("width", 100);
+
+            legend.selectAll('g').data(graphData)
+                .enter()
+                .append('g')
+                .each(function(d, i) {
+
+                    var g = d3.select(this);
+                    g.append("rect")
+                    .attr("x", width - 256)
+                    .attr("y", i*25+32)
+                    .attr("width", 16)
+                    .attr("height", 16)
+                    .style("fill", color(i));
+
+                    g.append("text")
+                    .attr("x", width - 224)
+                    .attr("y", i * 25 + 46)
+                    .style("font-size", 16)
+                    .attr("height",30)
+                    .attr("width",100)
+                    .style("fill", 'black')
+                    .text(d.title);
+
+                });
+        }
+
+        $(".arrow-right").bind("click", function (event) {
+            event.preventDefault();
+
+            // var vidItems = document.getElementsByClassName("vid-item");
+            // if(selectedVideoIndex<vidItems.length-1){
+            //     onClickVideoThumbnail(selectedVideoIndex+1);
+            // }
+
+            $(".vid-list-container").stop().animate({
+                scrollLeft: "+=336"
+            }, 750);
+        });
+        $(".arrow-left").bind("click", function (event) {
+            event.preventDefault();
+
+            // var vidItems = document.getElementsByClassName("vid-item");
+            // if(selectedVideoIndex>0){
+            //     onClickVideoThumbnail(selectedVideoIndex-1);
+            // }
+            $(".vid-list-container").stop().animate({
+                scrollLeft: "-=336"
+            }, 750);
+        });
+
+        function openPage(pageName,element,color) {
+            currPageName = pageName;
+        
+            var tablinks = document.getElementsByClassName("tablink");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].style.backgroundColor = "";
+            }
+            // document.getElementById(pageName).style.display = "block";
+
+            element.style.backgroundColor = color;
+            
+            var tabtitle = document.getElementById("tabtitle");
+            switch(pageName){
+                case "MostViewed":
+                    document.getElementById("video-heading").style.display = "block";
+                    document.getElementById("video-player").style.display = "block";
+                    document.getElementById("table").style.display = "table";
+                    document.getElementById("pie-graph").style.display = "none";
+                    //document.getElementById("pie-graph").style.visibility = 'hidden';
+                    tabtitle.innerHTML="Most Viewed Videos";
+                    break;
+                case "MostLiked":
+                    document.getElementById("video-heading").style.display = "block";
+                    document.getElementById("video-player").style.display = "block";
+                    document.getElementById("table").style.display = "table";
+                    document.getElementById("pie-graph").style.display = "none";
+                    //document.getElementById("pie-graph").style.visibility = 'hidden';
+                    tabtitle.innerHTML="Most Liked Videos";
+                    break;
+                case "MostDisliked":
+                    document.getElementById("video-heading").style.display = "block";
+                    document.getElementById("video-player").style.display = "block";
+                    document.getElementById("table").style.display = "table";
+                    document.getElementById("pie-graph").style.display = "none";
+                    //document.getElementById("pie-graph").style.visibility = 'hidden';
+                    tabtitle.innerHTML="Most Disliked Videos";
+                    break;
+                case "MostCommented":
+                    document.getElementById("video-heading").style.display = "block";
+                    document.getElementById("video-player").style.display = "block";
+                    document.getElementById("table").style.display = "table";
+                    document.getElementById("pie-graph").style.display = "none";
+                    //document.getElementById("pie-graph").style.visibility = 'hidden';
+                    tabtitle.innerHTML="Most Commented Videos";
+                    break;
+                case "CategoryVideoNum":
+                    document.getElementById("video-heading").style.display = "none";
+                    document.getElementById("vid_frame").setAttribute("src","");
+                    document.getElementById("video-player").style.display = "none";
+                    document.getElementById("table").style.display = "none";
+                    //document.getElementById("pie-graph").style.visibility = 'visible';
+                    document.getElementById("pie-graph").style.display = 'inline';
+
+                    tabtitle.innerHTML="How many trending videos does each category have?";
+                    break;
+                case "CategoryAverageViews":
+                    document.getElementById("video-heading").style.display = "none";
+                    document.getElementById("vid_frame").setAttribute("src","");
+                    document.getElementById("video-player").style.display = "none";
+                    document.getElementById("table").style.display = "none";
+                    document.getElementById("pie-graph").style.display = 'inline';
+
+                    tabtitle.innerHTML="What's the average number of views of videos in each category?";
+                    break;
+            }
+        }
+
+        document.getElementById("defaultOpen").click();
+    </script>
+  
+</body>
+</html>
