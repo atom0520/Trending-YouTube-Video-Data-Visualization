@@ -4,12 +4,14 @@
 
 </style>
 <body>
-    <h1 style="width: 960px; text-align: center;  margin:40px 0px 40px 0px;" >Pre-Process Dataset</h1>
+    <h1>Tnis page is for pre-processing the raw video dataset.</h1>
 
     <script src="https://d3js.org/d3.v3.min.js"></script>
     <script src="https://d3js.org/d3-dsv.v1.min.js"></script>
   
     <script>
+        var oldVideoDataFilename = "data/DEvideos.csv";
+        var newVideoDataFilename = "video_data_de.csv";
 
         function saveDataToFile(data, filename, type) {
             var file = new Blob([data], {type: type});
@@ -30,7 +32,7 @@
         }
 
         var rawFile = new XMLHttpRequest();
-        rawFile.open("GET", "data/CAvideos.csv", true);      
+        rawFile.open("GET", oldVideoDataFilename, true);      
        
         rawFile.onreadystatechange = function ()
         {
@@ -49,13 +51,13 @@
                         function(d) {
                             return d;
                         });
-
+                                        
                     console.log(data);
                     
                     newCSVString = d3.csvFormat(data);
                     alert(newCSVString);
 
-                    saveDataToFile(newCSVString, 'youtube_data_ca.csv', 'text/plain');                   
+                    saveDataToFile(newCSVString, newVideoDataFilename, 'text/plain');                   
 
                 }
             }

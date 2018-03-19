@@ -3,12 +3,8 @@
 <title>W3.CSS Template</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="css/w3.css">
-<script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
 
-<script src="scripts/datamaps.world.min.js"></script>
-<script src="scripts/datamaps.all.min.js"></script>
+<link rel="stylesheet" href="css/w3.css">
 <style>
     body {
         font-family: "Raleway", sans-serif;
@@ -81,27 +77,32 @@
         pointer-events:none;
         z-index:5;
     }
+
     #tooltip.hidden {
         opacity: 0;
     }
+
     #tooltip p {
         margin: 0;
         font-family: sans-serif;
         font-size: 12px;
         font-weight: 600;
         line-height: 20px;
-
     }
+
 </style>
+
+<script src="scripts/d3.min.js"></script>
+<script src="scripts/topojson.min.js"></script>
+<script src="scripts/datamaps.world.min.js"></script>
+<script src="scripts/datamaps.all.min.js"></script>
+
 <body>
 
-<!-- Navbar (sit on top) -->
 <div class="w3-top">
   <div class="w3-bar w3-red w3-padding w3-card" style="letter-spacing:4px;">
     <span class="w3-bar-item w3-text-white w3-hover-red">MM802 Mini Project</span>
-    <!-- <a href="#" class="w3-bar-item w3-button w3-text-white w3-hover-white">MM802 Mini Project</a> -->
 
-    <!-- Right-sided navbar links. Hide them on small screens -->
     <div class="w3-right w3-hide-small">
       <span class="w3-bar-item w3-text-white w3-hover-red">Made By Atom & Yohannes</span>
     </div>
@@ -153,21 +154,9 @@
         style=" position: relative; margin:auto; width: 800px; height: 400px;">
     </div>
 
-    <!-- <button class="w3-button w3-black w3-padding-large w3-large w3-margin-top">Get Started</button> -->
 </header>
-   
-<!-- <video width="320" height="240" controls>
-    <source src="https://www.youtube.com/watch?v=WMGVltvFPyE" type="video/mp4">
-
-  Your browser does not support the video tag.
-</video> -->
-
-<!-- <iframe id="ytplayer" type="text/html" width="720" height="405"
-src="https://www.youtube.com/embed/?autoplay=1&showinfo=1&playlist=FlsCjmMhFmw,6ZfuNTqbHE8,TyHvyGVs42U&color=white&controls=2&theme=white"
-frameborder="0" allowfullscreen> -->
 
 <script>
-        console.log(d3.select("#world-globe"));
         d3.select("#world-globe")
             .on("mouseover", function (d) {
                 d3.select("#tooltip")
@@ -189,6 +178,10 @@ frameborder="0" allowfullscreen> -->
                 d3.select("#tooltip").style("opacity", 0);
 
                 document.getElementById("choose-area-title").innerHTML="Choose an Area";
+            })
+
+            .on("click", function (d) {
+                window.location.href = "GlobalData.html";
             });
 
         var map = new Datamap({
@@ -200,9 +193,9 @@ frameborder="0" allowfullscreen> -->
                'GBR': '#ff7f0e',
                'FRA': '#9467bd',
                'DEU': '#2ca02c',
-            //    'CHN': '#d62728',
-               // 'IND': '#e377c2',
-               // 'PAK': '#7f7f7f',
+                // 'CHN': '#d62728',
+                // 'IND': '#e377c2',
+                // 'PAK': '#7f7f7f',
                defaultFill: 'rgba(192,192,192,0.9)'
            },
            data: {
@@ -212,14 +205,15 @@ frameborder="0" allowfullscreen> -->
                 'FRA': {fillKey: 'FRA'},
                 'DEU': {fillKey: 'DEU'},
 
-            //    'CHN': {fillKey: 'CHN'},
-               // 'IND': {fillKey: 'IND'},       
-               // 'PAK': {fillKey: 'PAK'}
+                // 'CHN': {fillKey: 'CHN'},
+                // 'IND': {fillKey: 'IND'},       
+                // 'PAK': {fillKey: 'PAK'}
            },
            done: function(datamap) {
-            //    datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography) {
-            //        alert(geography.properties.name);
-            //    });
+                //  datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography) {
+                //     alert(geography.properties.name);
+                //  });
+            
                 datamap.svg.select('.CAN').on('click', function(geography) {
                         window.location.href = "CanadaData.html";
                 });

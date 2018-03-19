@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html>
+<title>W3.CSS Template</title>
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="css/w3.css">
+<link rel="stylesheet" href="css/font-awesome.min.css">
+<style>
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        /* font-family: "Times New Roman", Georgia, Serif; */
+        }
+    h1,h2,h3,h4,h5,h6 {
+        font-family: "Playfair Display";
+        letter-spacing: 5px;
+    }
+
+    .tablink {
+        background-color: #555;
+        color: white;
+        float: left;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 14px 14px;
+        font-size: 17px;
+        width: 100%;
+        height: 64px;
+        margin-left: 0%;
+        margin-right: 0%;
+        margin-top: 0%;
+        margin-bottom: 0%;
+    }
+
+    img     {   width:128px;}
+    caption {   background-color:red; 
+                color:white;
+                border:1px dotted;
+                font:bold 22px arial; 
+                border-radius: 10px 10px 0px 0px; 
+                height:40px; 
+                margin: 0px 0px 4px 0px; 
+                vertical-align:middle;
+                }
+
+    th      {   background-color:red; 
+                color:white;
+                font:bold 18px arial;
+                height:40px;
+                padding:2px;
+                }
+    td      {   border:1px dotted; padding:2px; font-size:14px;}
+
+    .axis path,
+    .axis line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
+
+    .bar {
+      fill: orange;
+    }
+
+    .bar:hover {
+      fill: orangered ;
+    }
+
+    .x.axis path {
+      display: none;
+    }
+
+    .d3-tip {
+      line-height: 1;
+      font-weight: bold;
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      border-radius: 2px;
+    }
+
+    .d3-tip:after {
+      box-sizing: border-box;
+      display: inline;
+      font-size: 10px;
+      /* width: 100%; */
+      line-height: 1;
+      color: rgba(0, 0, 0, 0.8);
+      content: "\25BC";
+      position: absolute;
+      text-align: center;
+    }
+
+    .d3-tip.n:after {
+      margin: -1px -1px 0 0;
+      top: 100%;
+      left: 50%;
+    }
+
+    .container {
+        width: 100%;
+        /* max-width: 800px; */
+        min-width: 330px;
+        background: #fff;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 40px;
+        margin-bottom: 40px;
+        padding: 0px 40px 20px 40px;
+    }
+
+    .vid-container {
+        position: relative;
+        /* padding-bottom: 55%; */
+        margin-top: 59px; 
+        margin-left: auto;
+        margin-right: auto;
+        width: 640px;
+        height: 410px; 
+        background-color:lightgrey;
+    }
+    
+    .vid-container iframe,
+    .vid-container object,
+    .vid-container embed {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+       
+        height: 100%;
+    }
+
+    .vid-list-container {
+        width: 640px;
+        margin-left: auto;
+        margin-right: auto;
+        overflow-y: hidden;
+        overflow-x: scroll;
+        z-index: 8;
+        padding: 128px 0px 0px 0px;
+        /* margin-left:4%; */
+        /* padding-bottom: 20px; */
+        /* background-color:rgba(0, 0, 0, 0.8); */
+        border: 1px dotted grey;
+    }
+
+    .vid-list {
+        width: 1480px;
+        position: relative;
+        /* top:0;
+        left: 0; */
+    }
+
+    .vid-item {
+        display: block;
+        width: 148px;
+        height: 128px;
+        float: left;
+        margin: 0;
+        padding: 10px 10px 10px 10px;
+        background-color:rgba(0, 0, 0, 0.8);
+    }
+
+    .thumb {
+        /*position: relative;*/
+        overflow:hidden;
+        height: 84px;
+    }
+
+    .thumb img {
+        width: 100%;
+        position: relative;
+        top: -13px;
+    }
+
+    .vid-item .desc {
+        color: white;
+        font-size: 15px;
+        margin-top:5px;
+        white-space: nowrap; 
+        overflow: hidden;
+        text-overflow:ellipsis;
+    }
+  
+    .vid-item:hover {
+        background:darkgrey;
+        cursor: pointer;
+    }
+
+    .arrows {
+        position:relative;
+        width: 100%;
+    }
+
+    .arrow-left {
+        color: lightcoral;
+        position: absolute;
+        /* background: #777; */
+        /* padding: 16px; */
+        left: 50%;
+        transform:translate(-388px,0);
+        top: -108px;
+        cursor: pointer;
+        /* border: 1px solid white; */
+    }
+
+    .arrow-right {
+        color: lightcoral;
+        position: absolute;
+        /* background: #777; */
+        /* padding: 16px; */
+        right: 50%;
+        transform:translate(388px,0);
+        top: -108px;
+        cursor: pointer;
+        /* border: 1px solid white; */
+    }
+
+    .arrow-left:hover {
+        color: #CC181E;
+    }
+
+    .arrow-right:hover {
+        color: #CC181E;
+    }
+
+    #tooltip {
+        position: absolute;
+        width: 200px;
+        height: auto;
+        padding: 8px;
+        background-color: white;
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;
+        border-radius: 10px;
+        -webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+        -mox-box-shadow: 4px 4px 4px 10px rgba(0, 0, 0, 0.4);
+        box-shadow: 4px 4px 10px rbga(0, 0, 0, 0.4);
+        pointer-events:none;
+    }
+    #tooltip.hidden {
+        opacity: 0;
+    }
+    #tooltip p {
+        margin-top: 0;
+        margin-left: auto;
+        margin-right: auto;
+        font-family: sans-serif;
+        font-size: 16px;
+        line-height: 20px;
+
+    }
+    .arc {
+        opacity: 0.85;
+      }
+    .arc:hover {
+        opacity: 1;
+    }
+
+    .legend {
+        padding: 5px;
+        font: 10px sans-serif;
+        background: yellow;
+        box-shadow: 2px 2px 1px #888;
+    }
+</style>
+
+<script src="scripts/topojson.min.js"></script>
+<script src="scripts/datamaps.world.min.js"></script>
+<script src="scripts/datamaps.all.min.js"></script>
+<script src="scripts/d3.v4.js"></script>
+<script src="scripts/d3-tip.js"></script>
+<script src="scripts/jquery-2.0.3.min.js"></script>
+
+<body>
+    <div class="w3-top">
+        <div class="w3-bar w3-red w3-padding w3-card" style="letter-spacing:4px;">
+            <a href="index.html" class="w3-bar-item w3-button w3-text-white w3-hover-white" style="width:38px; margin-top:-1px"><img src="imgs/maplestory-icon.png" style="position:absolute; width:32px;transform:translate(-12px,-5px)"></img>&nbsp</a>
+            <span class="w3-bar-item w3-text-white w3-hover-red" style="padding-left:8px;">
+                <i class="fa fa-hand-o-left" style="position:absolute; font-size:24px; transform:translate(0px,-2px)"></i>
+                &nbsp&nbsp&nbsp&nbspClick to Go Home
+            </span>
+
+            <div class="w3-right w3-hide-small">
+                <span class="w3-bar-item w3-text-white w3-hover-red">MM802 Mini Project - Made By Atom & Yohannes</span>
+            </div>
+        </div>
+    </div>
+
+    <h1 class="w3-container w3-center" 
+        style="padding:118px 0 0px 0; transform: translate(-20px, 0);">
+        <img style="height:96px; transform: translate(16px, -28px);" src="imgs/youtube-logo.gif"></img>
+        <span class="w3-margin" id="header-text"></span>
+    </h1>
+
+    <div class="w3-content" style="
+        max-width:800px; 
+        max-Height:256px; 
+        padding: 0 0 0 0;   
+        margin-top:40px;
+        margin-bottom:40px;
+        overflow-x: hidden;
+        overflow-y: scroll;"
+        >
+
+        <button class="tablink" 
+            onclick="openPageBase(
+                'MostViewed', 
+                'Most Viewed Videos in All Countries',
+                this, 
+                '#f44336');" 
+            id="defaultOpen">
+            Which videos get most number of views in all countries?
+        </button>
+        <button class="tablink" 
+            onclick="openPageBase(
+                'MostLiked',
+                'Most Liked Videos in All Countries', 
+                this, 
+                '#f44336');">
+            Which videos get most number of likes in all countries?
+        </button>
+        <button class="tablink" 
+            onclick="openPageBase(
+                'MostDisliked',
+                'Most Disliked Videos in All Countries',  
+                this, 
+                '#f44336');">
+            Which videos get most number of dislikes in all countries?
+        </button>
+        <button class="tablink" 
+            onclick="openPageBase(
+                'MostCommented',
+                'Most Commented Videos in All Countries',  
+                 this,
+                 '#f44336');">
+            Which videos get most number of comments in all countries?
+        </button>
+        <button class="tablink" 
+            onclick="openPageGlobal(
+                'RegionsVideoNum', 
+                'Which countries have most number of trending videos?',
+                this, 
+                '#f44336');">
+                Which countries have most number of trending videos?
+        </button>
+        <button class="tablink" 
+            onclick="openPageGlobal(
+                'RegionsCategoryViews', 
+                'What’s the difference between different countries’ most popular categories?',
+                this, 
+                '#f44336');">
+                What’s the difference between different countries’ most popular categories?
+        </button>
+
+    </div>
+
+    <div class="w3-white w3-center">
+
+        <div class="container"  style="padding:64px 0 0 0">
+            <h2 id="tabtitle" >&nbsp</h2>
+        </div>
+
+        <h4 id='video-heading' style="margin: 0 0 -10px 0">
+            
+            <img id="vid-medal" style="position:absolute; width:32px; transform:translate(-38px,0)" src="" ></img>
+
+            <b id="vid-rank" style="color:#CC181E;font-size:32px; padding-left:0px">&nbsp</b>
+            <b id="vid-title">&nbsp</b>
+        </h4>
+          
+        <div id="video-player" class="container">
+            <img style="position:absolute; z-index:0; height:596px; width:704px; transform: translate(-50%, -58px);  left:50%;"  src="imgs/youtube_TV.jpg"></img>
+
+            <div class="vid-container">
+                <iframe id="vid_frame" src="" frameborder="0"></iframe>
+            </div>
+
+            <div class="vid-list-container">
+                <div class="vid-list">                  
+                    <div class="vid-item" onClick="">
+                        <div class="thumb"><img src=""></div>
+                        <div class="desc"></div>
+                    </div>
+                    <div class="vid-item" onClick="">
+                        <div class="thumb"><img src=""></div>
+                        <div class="desc"></div>
+                    </div>
+                    <div class="vid-item" onClick="">
+                        <div class="thumb"><img src=""></div>
+                        <div class="desc"></div>
+                    </div>
+                    <div class="vid-item" onClick="">
+                        <div class="thumb"><img src=""></div>
+                        <div class="desc"></div>
+                    </div>
+                    <div class="vid-item" onClick="">
+                        <div class="thumb"><img src=""></div>
+                        <div class="desc"></div>
+                    </div>
+                    <div class="vid-item" onClick="">
+                        <div class="thumb"><img src=""></div>
+                        <div class="desc"></div>
+                    </div>
+                    <div class="vid-item" onClick="">
+                        <div class="thumb"><img src=""></div>
+                        <div class="desc"></div>
+                    </div>
+                    <div class="vid-item" onClick="">
+                        <div class="thumb"><img src=""></div>
+                        <div class="desc"></div>
+                    </div>
+                    <div class="vid-item" onClick="">
+                        <div class="thumb"><img src=""></div>
+                        <div class="desc"></div>
+                    </div>
+                    <div class="vid-item" onClick="">
+                        <div class="thumb"><img src=""></div>
+                        <div class="desc"></div>
+                    </div>
+                </div>          
+            </div>
+        
+            <div class="arrows">
+                <div class="arrow-left"><i class="fa fa-chevron-circle-left" style="font-size:48px"></i></div>
+                <div class="arrow-right"><i class="fa fa-chevron-circle-right" style="font-size:48px"></i></div>        
+            </div>
+        </div>
+
+        <table id="table" align="center" style="padding:0 0 80px 0">
+
+        </table>
+    
+        <div id="bar-graph" style="margin:40px 0px 40px 0">
+    
+        </div>
+
+        <br>
+
+        <div id="pie-graph" style="margin:20px 0px 20px 0">
+    
+        </div>
+        
+        <div id="tooltip" class="hidden" >
+            <p style="margin-bottom:8px">
+                <strong id="pie-graph-tip-title">Important Label Heading</strong>
+            </p>
+            <p style="margin-bottom:4px">
+                <span id="pie-graph-tip-value">100</span>
+            </p>
+            <p style="margin-bottom:0px">
+                <span id="pie-graph-tip-percent">50</span>
+            </p>
+        </div>
+
+        <div id="loading" style="padding-bottom:40px; padding-top:80px">
+            <img src="imgs/loading.gif" style="width:256px"></img>
+            <br>
+            <h2 style="color:#CC181E;">Please Wait Loading...</h2>    
+        </div>
+
+    </div>
+
+    <script src="scripts/data-page-base.js"></script>
+    <script src="scripts/data-page-global.js"></script>
+    <script>
+        headerText = "Global Trending YouTube Video Data";
+
+        document.getElementById("header-text").innerHTML = headerText;
+        document.getElementById("defaultOpen").click();
+    </script>
+  
+</body>
+</html>
