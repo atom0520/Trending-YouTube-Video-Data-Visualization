@@ -2,43 +2,110 @@
 <html>
 <title>W3.CSS Template</title>
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <link rel="stylesheet" href="css/w3.css">
+<link rel="stylesheet" href="css/font-awesome.min.css">
 <style>
     body {
-        font-family: "Raleway", sans-serif;
-        /* font-family: "Times New Roman", Georgia, Serif; */
-        }
+        font-family: "Times New Roman", Georgia, Serif;
+    }
+
     h1,h2,h3,h4,h5,h6 {
         font-family: "Playfair Display";
         letter-spacing: 5px;
     }
 
+    caption {   background-color:red; 
+                color:white;
+                border:1px dotted;
+                font:bold 22px arial; 
+                border-radius: 10px 10px 0px 0px; 
+                height:40px; 
+                margin: 0px 0px 4px 0px; 
+                vertical-align:middle;
+                }
+
+    th      {   background-color:red; 
+                color:white;
+                font:bold 18px arial;
+                height:40px;
+                padding:2px;
+            }
+
+    td      { border:1px dotted; padding:2px; font-size:14px;}
+
+    .axis path,
+    .axis line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
+
+    .bar {
+      fill: orange;
+    }
+
+    .bar:hover {
+      fill: orangered ;
+    }
+
+    .x.axis path {
+      display: none;
+    }
+
+    .d3-tip {
+      line-height: 1;
+      font-weight: bold;
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      border-radius: 2px;
+    }
+
+    .d3-tip:after {
+      box-sizing: border-box;
+      display: inline;
+      font-size: 10px;
+      /* width: 100%; */
+      line-height: 1;
+      color: rgba(0, 0, 0, 0.8);
+      content: "\25BC";
+      position: absolute;
+      text-align: center;
+    }
+
+    .d3-tip.n:after {
+      margin: -1px -1px 0 0;
+      top: 100%;
+      left: 50%;
+    }
+
     .container {
         width: 100%;
-        max-width: 480px;
-        /* min-width: 330px; */
+        /* max-width: 800px; */
+        min-width: 330px;
         background: #fff;
         margin-left: auto;
         margin-right: auto;
-        /* margin: 10 10 10 10; */
+     
         margin-top: 40px;
         margin-bottom: 40px;
-        /* padding: 0px 0px 20px 0px; */
+        padding: 0px 40px 20px 40px;
     }
 
     .vid-container {
         position: relative;
-        padding-bottom: 52%;
-        padding-top: 30px; 
-        height: 0; 
-        background-color:lightgrey;
+        margin-bottom: 112px;
+        margin-left: auto;
+        margin-right: auto;
+        width: 520px;
+        height: 320px; 
+        background-color:rgb(207, 92, 92);
     }
-
-    .vid-container iframe,
-    .vid-container object,
-    .vid-container embed {
+   
+    .vid-container iframe {
         position: absolute;
         top: 0;
         left: 0;
@@ -46,228 +113,1168 @@
         height: 100%;
     }
 
-    #world-globe{
-        filter: grayscale(50%);
-        opacity: 0.8;
-        
+    .vid-list-container {
+        width: 640px;
+        margin-left: auto;
+        margin-right: auto;
+        overflow-y: hidden;
+        overflow-x: scroll;
+        z-index: 8;
+        /* padding: 128px 0px 0px 0px; */
+        /* margin-left:4%; */
+        /* padding-bottom: 20px; */
+        /* background-color:rgba(0, 0, 0, 0.8); */
+        border: 1px dotted grey;
     }
 
-    #world-globe:hover {
-        filter: grayscale(0%);
-        opacity: 1;
-    
+    .vid-list {
+        width: 640px;
+        position: relative;
+        height: 128px;
+        background-color:rgba(0, 0, 0, 0.8);
+        /* top:0;
+        left: 0; */
+    }
+
+    .vid-item {
+        display: block;
+        width: 148px;
+        height: 128px;
+        float: left;
+        margin: 0;
+        padding: 10px 10px 10px 10px;
+        /* background-color:rgba(0, 0, 0, 0.8); */
+    }
+
+    .thumb {
+        /*position: relative;*/
+        overflow:hidden;
+        height: 84px;
+    }
+
+    .thumb img {
+        width: 100%;
+        position: relative;
+        top: -13px;
+    }
+
+    .vid-item .desc {
+        color: white;
+        font-size: 15px;
+        margin-top:5px;
+        white-space: nowrap; 
+        overflow: hidden;
+        text-overflow:ellipsis;
+    }
+  
+    .vid-item:hover {
+        background:darkgrey;
+        cursor: pointer;
+    }
+
+    .arrows {
+        position:relative;
+        width: 100%;
+    }
+
+    .arrow-left {
+        color: lightcoral;
+        position: absolute;
+        /* background: #777; */
+        /* padding: 16px; */
+        left: 50%;
+        transform:translate(-388px,0);
+        top: -108px;
+        cursor: pointer;
+        /* border: 1px solid white; */
+    }
+
+    .arrow-right {
+        color: lightcoral;
+        position: absolute;
+        /* background: #777; */
+        /* padding: 16px; */
+        right: 50%;
+        transform:translate(388px,0);
+        top: -108px;
+        cursor: pointer;
+        /* border: 1px solid white; */
+    }
+
+    .arrow-left:hover {
+        color: #CC181E;
+    }
+
+    .arrow-right:hover {
+        color: #CC181E;
     }
 
     #tooltip {
         position: absolute;
-        width: auto;
+        width: 200px;
         height: auto;
-        padding-top: 2px;
-        padding-bottom: 2px;
-        padding-left: 4px;
-        padding-right: 4px;
+        padding: 8px;
         background-color: white;
-        /* -webkit-border-radius: 10px;
+        -webkit-border-radius: 10px;
         -moz-border-radius: 10px;
-        border-radius: 10px; */
-        -webkit-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);
-        -mox-box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.4);
-        box-shadow: 1px 1px 1px rbga(0, 0, 0, 0.4);
-        border:1px solid rgba(128, 128, 128, 0.4);
+        border-radius: 10px;
+        -webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+        -mox-box-shadow: 4px 4px 4px 10px rgba(0, 0, 0, 0.4);
+        box-shadow: 4px 4px 10px rbga(0, 0, 0, 0.4);
         pointer-events:none;
-        z-index:5;
     }
-
     #tooltip.hidden {
         opacity: 0;
     }
-
     #tooltip p {
-        margin: 0;
+        margin-top: 0;
+        margin-left: auto;
+        margin-right: auto;
         font-family: sans-serif;
-        font-size: 12px;
-        font-weight: 600;
+        font-size: 16px;
         line-height: 20px;
     }
 
+    .arc {
+        opacity: 0.85;
+      }
+      
+    .arc:hover {
+        opacity: 1;
+    }
+
+    .legend {
+        padding: 5px;
+        font: 10px sans-serif;
+        background: yellow;
+        box-shadow: 2px 2px 1px #888;
+    }
 </style>
 
-<script src="scripts/d3.min.js"></script>
 <script src="scripts/topojson.min.js"></script>
-<script src="scripts/datamaps.world.min.js"></script>
-<script src="scripts/datamaps.all.min.js"></script>
+<script src="scripts/d3.v4.js"></script>
+<script src="scripts/d3-tip.js"></script>
+<script src="scripts/jquery-2.0.3.min.js"></script>
 
 <body>
+    <div class="w3-top" >
+        <div class="w3-bar w3-red w3-padding w3-card" style="letter-spacing:4px;">
+            <!-- <a href="index.html" class="w3-bar-item w3-button w3-text-white w3-hover-white" style="width:38px; margin-top:-1px"><img src="imgs/maplestory-icon.png" style="position:absolute; width:32px;transform:translate(-12px,-5px)"></img>&nbsp</a>
+            <span class="w3-bar-item w3-text-white w3-hover-red" style="padding-left:8px;">
+                <i class="fa fa-hand-o-left" style="position:absolute; font-size:24px; transform:translate(0px,-2px)"></i>
+                &nbsp&nbsp&nbsp&nbspClick to Go Home
+            </span> -->
+            <span class="w3-bar-item w3-text-white w3-hover-red" style="padding-left:8px;">
+                Trending YouTube Video Data Visualization
+            </span>
 
-<div class="w3-top">
-  <div class="w3-bar w3-red w3-padding w3-card" style="letter-spacing:4px;">
-    <span class="w3-bar-item w3-text-white w3-hover-red">MM802 Mini Project</span>
-
-    <div class="w3-right w3-hide-small">
-      <span class="w3-bar-item w3-text-white w3-hover-red">Made By Atom & Yohannes</span>
-    </div>
-  </div>
-</div>
-
-<header class="w3-container w3-white w3-center" style="padding:128px 16px">
-    <h1 class="w3-margin w3-jumbo">MM802 Mini Project</h1>
-    <p class="w3-xlarge" style="transform: translate(-12px, 0);">
-            <img style="height:96px; transform: translate(0, -28px);" src="imgs/youtube-logo.gif"></img>
-        Trending YouTube Video Data Visualization
-    </p>
-
-    <img style="position:absolute; z-index:0; height:96px; left:50%; transform: translate(-400px, 192px);"  src="imgs/atom-character.gif"></img>
-    <img style="position:absolute; z-index:0; height:96px; right:50%; transform: translate(400px, 192px);"  src="imgs/yohannes-character.gif"></img>
-    
-    <div class="container"  style="padding:25px 0 60px 0">
-        <img style="position:absolute; z-index:0; width:528px; height:408px; transform: translate(-50%, -41px);  left:50%;"  src="imgs/youtube_TV.jpg"></img>
-        
-        <div class="vid-container">
-            <iframe id="vid_frame" 
-                src="http://youtube.com/embed/SWOEVxpuiqE?autoplay=1&rel=0&showinfo=0&autohide=1&controls=0" 
-                frameborder="0" 
-                height:"320px">
-            </iframe>
+            <div class="w3-right w3-hide-small">
+                <span class="w3-bar-item w3-text-white w3-hover-red">Made By Atom & Yohannes</span>
+            </div>
         </div>
     </div>
+
+    <h1 class="w3-container w3-center" 
+        style="padding:118px 0 0px 0; transform: translate(-20px, 0);">
+        <img style="height:96px; transform: translate(16px, -28px);" src="imgs/youtube-logo.gif"></img>
+        <b class="w3-margin" id="page-heading-text" style="font-size:32px"></b>
+    </h1>
     
-    <br>
-    <br>
-    
-    <h3 class="w3-margin" id="choose-area-title">Choose an Area</h3>
-    <h5 class="w3-margin" style="color:lightcoral"><b>Click an area to view the corresponding video data</b></h5>
+    <div class="w3-white w3-center">
+        <h4 id='video-heading' style="margin:48px 48px 48px 48px">            
+            <b id="vid-rank" style="color:#CC181E">&nbsp</b>   
+            <span id="vid-title">MapleStory Symphony in Budapest - When The Morning Comes</span>
+        </h4>
+        
+        <img style="position:absolute; z-index:0; height:96px; left:50%; transform: translate(-400px, 192px);"  src="imgs/atom-character.gif"></img>
+        <img style="position:absolute; z-index:0; height:96px; right:50%; transform: translate(400px, 192px);"  src="imgs/yohannes-character.gif"></img>
 
-    <img id="world-globe"
-         style="position:absolute; 
-                z-index:3; height:80px; 
-                left:50%; 
-                transform: translate(-336px, 232px);" 
-         src="imgs/globe.gif"
-       
-         >
-    </img>
-    <div id="tooltip" class="hidden">
-        <p >Globe</p>
-    </div>
-
-    <div id="map-container" 
-        style=" position: relative; margin:auto; width: 800px; height: 400px;">
-    </div>
-
-</header>
-
-<script>
-        d3.select("#world-globe")
-            .on("mouseover", function (d) {
-                d3.select("#tooltip")
-                    .style("left", d3.event.pageX+16+'px')
-                    .style("top", d3.event.pageY+16+'px')
-                    .style("opacity", 1);
-                
-                document.getElementById("choose-area-title").innerHTML="Global Video Data";
-            })
-
-            .on("mousemove", function (d) {
-                d3.select("#tooltip")
-                    .style("left", d3.event.pageX+16+'px')
-                    .style("top", d3.event.pageY+16+'px')
-                    .style("opacity", 1);
-            })
-
-            .on("mouseout", function (d) {
-                d3.select("#tooltip").style("opacity", 0);
-
-                document.getElementById("choose-area-title").innerHTML="Choose an Area";
-            })
-
-            .on("click", function (d) {
-                window.location.href = "GlobalData.html";
-            });
-
-        var map = new Datamap({
-           element: document.getElementById('map-container'),
-          
-           fills: {
-               'USA': '#1f77b4',
-               'CAN': '#d62728',
-               'GBR': '#ff7f0e',
-               'FRA': '#9467bd',
-               'DEU': '#2ca02c',
-                // 'CHN': '#d62728',
-                // 'IND': '#e377c2',
-                // 'PAK': '#7f7f7f',
-               defaultFill: 'rgba(192,192,192,0.9)'
-           },
-           data: {
-                'CAN': {fillKey: 'CAN'},
-                'USA': {fillKey: 'USA'},
-                'GBR': {fillKey: 'GBR'},
-                'FRA': {fillKey: 'FRA'},
-                'DEU': {fillKey: 'DEU'},
-
-                // 'CHN': {fillKey: 'CHN'},
-                // 'IND': {fillKey: 'IND'},       
-                // 'PAK': {fillKey: 'PAK'}
-           },
-           done: function(datamap) {
-                //  datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography) {
-                //     alert(geography.properties.name);
-                //  });
+        <div id="video-player" class="container">
+            <img style="position:absolute; z-index:0; width:574px; height:468px; transform: translate(-50%, -47px);  left:50%;"  src="imgs/youtube_TV.jpg"></img>
             
-                datamap.svg.select('.CAN').on('click', function(geography) {
-                        window.location.href = "CanadaData.html";
+            <div class="vid-container">
+                <iframe id="vid_frame" 
+                    src="http://youtube.com/embed/SWOEVxpuiqE?autoplay=1&rel=0&showinfo=0&autohide=1&controls=0" 
+                    frameborder="0">
+                </iframe>
+                <img id="404-img" style="position:relative; z-index:0; width:520px; height:320px; transform: translate(-50%, 0px);  left:50%;"  src="imgs/404.jpg"></img>
+            </div>
+
+            <div class="vid-list-container">
+                <div class="vid-list" id="vid-list" >                  
+                   
+                </div>          
+            </div>
+        
+            <div class="arrows">
+                <div class="arrow-left"><i class="fa fa-chevron-circle-left" style="font-size:48px"></i></div>
+                <div class="arrow-right"><i class="fa fa-chevron-circle-right" style="font-size:48px"></i></div>        
+            </div>
+        </div>
+
+        <div style="font-size:20px; padding-right:50%; transform: translate(240px, 0);" align="right">
+            <div style="margin:16px 16px 16px 16px;white-space:nowrap;">
+                Region&nbsp
+                <select id="select-region" style="width:320px" onchange="onSelectRegionChange()" >
+                    <option disabled selected value> -- select a region -- </option>
+                </select>
+            </div>
+            <div style="margin:16px 16px 16px 16px;white-space:nowrap;">
+                Video Category&nbsp
+                <select id="select-category" style="width:320px" >
+                    <option disabled selected value> -- select a category -- </option>
+                </select>
+            </div>
+            <div style="margin:16px 16px 16px 16px;white-space:nowrap;" >
+                Topic&nbsp
+                <select id="select-topic" style="width:320px">
+                    <option disabled selected value> -- select a topic -- </option>
+                </select>
+            </div>
+            <div style="margin:16px 16px 16px 16px;white-space:nowrap;">
+                <span id="text-max-search-number" >Maximum Search Number (<30)&nbsp</span>
+                <!-- <select style="width:320px">
+                    
+                </select> -->
+                <input id="input-max-search-number" type="number" name="quantity" min="1" max="30">
+            </div>
+        </div>
+
+        <button class="button" style="font-size:20px;" onclick="onClickSearchButton()">
+            Let's See!
+        </button>
+   
+
+        <table id="ranking-table" align="center" style="margin-top:40px">
+
+        </table>
+    
+        <div id="bar-graph" align="center">
+    
+        </div>
+
+        <!-- <br> -->
+
+        <div id="pie-graph" style="padding:20px 0 20px 0">
+    
+        </div>
+        
+        <!-- <div id="tooltip" class="hidden" >
+            <p style="margin-bottom:8px">
+                <strong id="pie-graph-tip-title">Important Label Heading</strong>
+            </p>
+            <p style="margin-bottom:4px">
+                <span id="pie-graph-tip-value">100</span>
+            </p>
+            <p style="margin-bottom:0px">
+                <span id="pie-graph-tip-percent">50</span>
+            </p>
+        </div> -->
+
+        <div id="loading" style="padding-bottom:40px; padding-top:80px">
+            <img src="imgs/loading.gif" style="width:256px"></img>
+            <br>
+            <h2 style="color:#CC181E;">Please Wait Loading...</h2>    
+        </div>
+
+    </div>
+
+    <!-- <script src="scripts/data-page-base.js"></script>
+    <script src="scripts/data-page-regional.js"></script> -->
+    <script>
+        var videoData=null;
+        var categoryData=null;
+
+        var searchedRegionId=null;
+        var searchedCategoryId=null;
+        var searchedTopicId=null;
+        var searchedVideoData=null;
+
+        var selectedVideoIndex = 0; 
+
+        var headerText = "Trending YouTube Video Data Visualization";
+        var maxSearchNumUpperbound = 100;
+
+        document.getElementById("page-heading-text").innerHTML = headerText;
+        // document.getElementById("defaultOpen").click();
+        document.getElementById("404-img").style.display = "none";
+        document.getElementById("text-max-search-number").innerHTML = "Maximum Search Number (<"+maxSearchNumUpperbound+")&nbsp"
+        document.getElementById("loading").style.display = "none";
+
+        var regionData = {
+            "ca":{
+                name:"Canada"
+            },
+            "us":{
+                name:"USA"
+            },
+            "gb":{
+                name:"Britain"
+            },
+            "fr":{
+                name:"France"
+            },
+            "de":{
+                name:"Germany"
+            },
+            "gl":{
+                name:"Global"
+            }
+        }
+        
+        var selectRegion = document.getElementById("select-region");
+
+        for(var key in regionData){
+            var option = document.createElement("option");
+            option.text = regionData[key].name;
+            option.value = key;
+            selectRegion.appendChild(option);
+        }
+
+        function loadSelectCategoryOptions(){
+            console.log("loadSelectCategoryOptions");
+            var selectRegion = document.getElementById("select-region");
+            var selectedRegionId = selectRegion.options[selectRegion.selectedIndex].value;
+
+            if(categoryData==null || categoryData[selectedRegionId]==null){
+                loadRegionCategoryData(selectedRegionId,loadSelectCategoryOptions);
+                return;
+            }
+
+            console.log(categoryData);
+
+            var selectCategory = document.getElementById("select-category");
+            for(var key in categoryData[selectedRegionId]){
+                if(categoryData[selectedRegionId].hasOwnProperty(key)){
+                    var option = document.createElement("option");
+                    option.text = categoryData[selectedRegionId][key].title;
+                    option.value = key;
+           
+                    selectCategory.appendChild(option);
+                }
+            }
+
+            var option = document.createElement("option");
+            option.text = "All Categories";
+            option.value = "99";
+            selectCategory.appendChild(option);
+        }
+        
+        function includeOrNot(idSet,id){
+            var included = false;
+            
+            for(var j=0;j<idSet.length;j+=1){
+                if(idSet[j]==id){
+                    included=true;
+                    break;
+                }
+            }
+
+            return included;
+        }
+
+        var topicsOption = {
+            "most-viewed":{
+                text:"Most Viewed Videos" 
+            },
+            "most-liked":{
+                text:"Most Liked Videos"
+            },
+            "most-disliked":{
+                text:"Most Disliked Videos"
+            },
+            "most-commented":{
+                text:"Most Commented Videos"
+            }
+        }
+
+        var selectTopic = document.getElementById("select-topic");
+        for(var key in topicsOption){
+            var option = document.createElement("option");
+            option.text = topicsOption[key].text;
+            option.value = key;
+            selectTopic.appendChild(option);
+        }
+
+        function loadRegionCategoryData(regionId, callback){
+            console.log("loadCategoryData");
+            if(categoryData==null){
+                categoryData = {};
+            }
+
+            if(categoryData[regionId]!=null){
+                if(callback!=null){
+                    callback();
+                }
+            }
+
+            d3.json(getCategoryDataFilename(regionId), function(root) {
+
+                var categoryItems = root.items;
+
+                temp = {};
+                for(var i=0;i<categoryItems.length;i+=1){
+                    var categoryId = categoryItems[i].id;
+                    var categoryTitle = categoryItems[i].snippet.title;
+                    temp[categoryId]={};
+                    temp[categoryId].title = categoryTitle;
+                    temp[categoryId].video_num = 0;
+                    temp[categoryId].views = 0;
+                }
+
+                categoryData[regionId]=temp;
+
+                if(callback!=null){
+                    callback();
+                }
+            });
+        }
+
+        function getVideoDataFilename(regionId){
+            // console.log("getCategoryDataFilename");
+         
+            console.log("data/video_data_"+regionId+".csv");
+            return "data/video_data_"+regionId+".csv";
+        }
+
+        function getCategoryDataFilename(regionId){
+            if(regionId=="gl"){
+                return "data/category_data_us.json";
+            }
+            // console.log("getCategoryDataFilename");
+            // console.log("data/category_data_"+regionId+".json");
+            return "data/category_data_"+regionId+".json";
+        }
+        // function loadSelectOptions(selectId, options){
+        //     var selectTopic = document.getElementById(selectId);
+        //     for(var i=0;i<options.length;i+=1){
+        //         var option = document.createElement("option");
+        //         option.text = options[i].text;
+        //         option.value = options[i].value;
+        //         selectTopic.appendChild(option);
+        //     }
+        // }
+
+        function onClickSearchButton(){
+  
+            var selectRegion = document.getElementById("select-region");
+            var regionId = selectRegion.options[selectRegion.selectedIndex].value;
+
+            var selectCategory = document.getElementById("select-category");
+            var categoryId = selectCategory.options[selectCategory.selectedIndex].value;
+
+            var selectTopic = document.getElementById("select-topic");
+            var topicId = selectTopic.options[selectTopic.selectedIndex].value;
+
+            var maxSearchNumber = document.getElementById("input-max-search-number").value;
+
+            if(maxSearchNumber==""){
+                alert("Please enter the maximum search number.");
+            }else if (maxSearchNumber<1){
+                alert("Maximum search number should not be smaller than 1.");
+            }else if (maxSearchNumber>maxSearchNumUpperbound){
+                alert("Maximum search number should not be bigger than "+maxSearchNumUpperbound+".");
+            }else{
+                cleanRankingTable();
+                cleanBarGraph();    
+                document.getElementById("loading").style.display = "block";
+
+                searchVideoData(regionId, categoryId, topicId, maxSearchNumber,
+                    function(){                                
+
+                        loadVideoPlayer();
+                        loadRankingTable();
+                        loadBarGraph(
+                            searchedVideoData,
+                            searchedTopicId,
+                            getCaptionText(regionId, categoryId, topicId)
+                        );
+
+                        document.getElementById("loading").style.display = "none";
+                    });
+           
+                // loadVideoPlayer();
+            }
+            // console.log(inputMaxSearchNumber.value=="");
+        }
+
+        function onSelectRegionChange(){
+            loadSelectCategoryOptions();
+        }
+
+        function iterateLoadRegionVideoData(i,tempGlobalVideoData,callback){
+            console.log("iterateLoadRegionVideoData");
+            var regionId = Object.keys(regionData)[i];
+   
+            console.log(regionId);
+
+            if(regionId != 'gl'){
+                if(videoData[regionId]==null){
+                    d3.csv(getVideoDataFilename(regionId),
+                        function(data){
+                            data.views = +data.views;
+                            data.likes = +data.likes;
+                            data.dislikes = +data.dislikes;
+                            data.comment_count = +data.comment_count;
+                            return data;
+                        },
+                        function(error,data){
+
+                            videoData[regionId]=data;
+                            Array.prototype.push.apply(tempGlobalVideoData,data); 
+
+                            i+=1;
+                            if(i<Object.keys(regionData).length){
+                                setTimeout(
+                                    function(){
+                                        iterateLoadRegionVideoData(i,tempGlobalVideoData,callback);
+                                    },0);
+                                
+                            }else{
+                                videoData['gl'] = tempGlobalVideoData;
+
+                                if(callback!=null){
+                                    callback();
+                                }
+                            }
+                        });
+                    return;
+                }else{
+                    Array.prototype.push.apply(tempGlobalVideoData,videoData[regionId]); 
+                }
+            }
+
+            i+=1;
+            if(i<Object.keys(regionData).length){
+                setTimeout(
+                    function(){
+                        iterateLoadRegionVideoData(i,tempGlobalVideoData,callback);
+                    },0);
+                
+            }else{
+                videoData['gl'] = tempGlobalVideoData;
+
+                if(callback!=null){
+                    callback();
+                }
+            }
+          
+        }
+
+        function loadRegionVideoData(regionId,callback){
+            console.log("loadRegionVideoData");
+            if(videoData==null){
+                videoData = {};
+            }
+
+            if(videoData[regionId]!=null){
+                if(callback!=null){
+                    callback();
+                }
+            }
+
+            if(regionId=="gl"){
+                var temp=[];
+                setTimeout(
+                    function(){
+                        iterateLoadRegionVideoData(
+                            0,temp,
+                            callback);
+                    },0);
+
+                return;
+            }
+
+            d3.csv(getVideoDataFilename(regionId),
+                function(data){
+                    data.views = +data.views;
+                    data.likes = +data.likes;
+                    data.dislikes = +data.dislikes;
+                    data.comment_count = +data.comment_count;
+                    return data;
+                },
+                function(error,data){
+                    
+                    // console.log("region video data:");
+                    
+                    videoData[regionId]=data;
+                    if(callback!=null){
+                        callback();
+                    }
+                });
+        }
+
+        function searchVideoData(regionId, categoryId, topicId, maxSearchNum, callback){
+            console.log("searchVideoData");
+            console.log(videoData);
+            
+
+            if(videoData==null || videoData[regionId]==null){
+                loadRegionVideoData(regionId, function(){
+                    searchVideoData(regionId, categoryId, topicId, maxSearchNum, callback);
+                    }
+                );
+                return;
+            }
+
+            var sortField;
+            switch(topicId){
+                case "most-viewed":
+                sortField="views";
+                break;
+                case "most-liked":
+                sortField="likes";
+                break;
+                case "most-disliked":
+                sortField="dislikes";
+                break;
+                case "most-commented":
+                sortField="comment_count";
+                break;
+            }
+            
+            dataSorted = videoData[regionId].slice(0)
+            dataSorted.sort(
+                function(a,b){
+                    return b[sortField]-a[sortField];
                 });
 
-                datamap.svg.select('.CAN').on('mouseenter', function(geography) {
-                    document.getElementById("choose-area-title").innerHTML="Canada Video Data";
-                });
-                datamap.svg.select('.CAN').on('mouseleave', function(geography) {
-                    document.getElementById("choose-area-title").innerHTML="Choose an Area";
-                });
+            var videoIdSet = [];
+            var temp=[];
 
-                datamap.svg.select('.USA').on('click', function(geography) {
-                        window.location.href = "USAData.html";
-                });
-                datamap.svg.select('.USA').on('mouseenter', function(geography) {
-                    document.getElementById("choose-area-title").innerHTML="America Video Data";
-                });
-                datamap.svg.select('.USA').on('mouseleave', function(geography) {
-                    document.getElementById("choose-area-title").innerHTML="Choose an Area";
-                });
+            for(var i=0;i<dataSorted.length && temp.length<maxSearchNum;i+=1){
+ 
+                if(categoryId=="99" || dataSorted[i].category_id==categoryId){
+                    if(includeOrNot(videoIdSet,dataSorted[i].video_id)==false){
+         
+                        videoIdSet.push(dataSorted[i].video_id);
+                        temp.push(dataSorted[i]);
+                    }
+                }
+            }
 
-                datamap.svg.select('.GBR').on('click', function(geography) {
-                        window.location.href = "BritainData.html";
-                });
-                datamap.svg.select('.GBR').on('mouseenter', function(geography) {
-                    document.getElementById("choose-area-title").innerHTML="Britain Video Data";
-                });
-                datamap.svg.select('.GBR').on('mouseleave', function(geography) {
-                    document.getElementById("choose-area-title").innerHTML="Choose an Area";
-                });
+            if(temp.length==0){
+                alert("No data found.");
+            }
 
-                datamap.svg.select('.FRA').on('click', function(geography) {
-                        window.location.href = "FranceData.html";
-                });
-                datamap.svg.select('.FRA').on('mouseenter', function(geography) {
-                    document.getElementById("choose-area-title").innerHTML="France Video Data";
-                });
-                datamap.svg.select('.FRA').on('mouseleave', function(geography) {
-                    document.getElementById("choose-area-title").innerHTML="Choose an Area";
-                });
+            searchedVideoData = temp;
+            searchedRegionId = regionId;
+            searchedCategoryId = categoryId;
+            searchedTopicId = topicId;
 
-                datamap.svg.select('.DEU').on('click', function(geography) {
-                        window.location.href = "GermanyData.html";
-                });
-                datamap.svg.select('.DEU').on('mouseenter', function(geography) {
-                    document.getElementById("choose-area-title").innerHTML="Germany Video Data";
-                });
-                datamap.svg.select('.DEU').on('mouseleave', function(geography) {
-                    document.getElementById("choose-area-title").innerHTML="Germany an Area";
-                });
-           }
-       });
-   </script>
+            if(callback!=null){
+                callback();
+            }
+            // return temp;
+            // videoIdSet = [];
+            // dataDeduplicated=[];
 
+            // deduplicateSortedData(dataSorted,0,videoIdSet,dataDeduplicated,maxSearchNum,
+            //     function(){
+            //         mostViewed = dataDeduplicated;
+            //         if(callback!=null){
+            //             callback();
+            //         }
+            //     }
+            // );
+        }
 
+        function loadVideoPlayer(){
+           
+            var vidList = document.getElementById("vid-list");
+            // while (tableElement.firstChild) {
+            //     tableElement.removeChild(tableElement.firstChild);
+            // }
+            console.log(vidList.childNodes);
+            while (vidList.firstChild) {
+                vidList.removeChild(vidList.firstChild);
+            }
+
+            var playerVideoData=searchedVideoData;
+
+            vidList.style.width=Math.max(148*playerVideoData.length,640)+"px";
+
+            if(playerVideoData.length==0){
+                document.getElementById('vid_frame').src="";
+                document.getElementById("404-img").style.display = "block";
+                document.getElementById('vid-title').innerHTML = "No Data Found";
+                document.getElementById('vid-rank').innerHTML = "";
+                return;    
+            }else{
+                document.getElementById("404-img").style.display = "none";
+            }
+
+            for(var i=0;i<playerVideoData.length;i+=1){
+                var vidItem = document.createElement("div");
+                vidItem.setAttribute("class","vid-item");
+                
+                var thumb = document.createElement("div");
+                thumb.setAttribute("class","thumb");
+                
+                var thumbImage = document.createElement("img");
+                thumbImage.setAttribute("src",playerVideoData[i].thumbnail_link);
+
+                thumb.appendChild(thumbImage);
+
+                var desc = document.createElement("div");
+                desc.setAttribute("class","desc");
+                desc.innerHTML = playerVideoData[i].title;
+                
+                vidItem.appendChild(thumb);
+                vidItem.appendChild(desc);
+
+                vidItem.setAttribute("onClick","onClickVideoThumbnail("+i+")");
+                
+                vidList.appendChild(vidItem);
+            }
+
+            onClickVideoThumbnail(0);
+            // var vidItems = document.getElementsByClassName("vid-item");
+
+            // for(var i=0;i<vidItems.length;i+=1){
+            //     var vidItem = vidItems[i];
+
+            //     vidItem.setAttribute("onClick","onClickVideoThumbnail("+i+")");
+                
+            //     for (var j = 0; j < vidItem.childNodes.length; j++) {
+            //         if (vidItem.childNodes[j].className == "thumb") {
+            //             var node = vidItem.childNodes[j];
+                        
+            //             node.childNodes[0].src=playerVideoData[i].thumbnail_link;
+            //             break;
+            //         }        
+            //     }
+                
+            //     for (var j = 0; j < vidItem.childNodes.length; j++) {
+            //         if (vidItem.childNodes[j].className == "desc") {
+            //             var node = vidItem.childNodes[j];
+            //             node.innerHTML=playerVideoData[i].title;
+            //             break;
+            //         }        
+            //     }
+                
+            //     onClickVideoThumbnail(0);
+            // }
+        }
+
+        function cleanRankingTable(){
+            var rankingTable = document.getElementById("ranking-table");
+            while (rankingTable.firstChild) {
+                rankingTable.removeChild(rankingTable.firstChild);
+            }
+            rankingTable.style.display = "none";
+        }
+
+        function loadRankingTable(){
+
+            var tableVideoData = searchedVideoData;
+            if(tableVideoData.length==0){
+                return;
+            }
+
+            if(categoryData[searchedRegionId]==null){
+                loadRegionCategoryData(searchedRegionId,loadTable);
+                return;
+            }
+
+            var rankingTable = document.getElementById("ranking-table");
+            rankingTable.style.display = "table";
+
+            // var captionTopic;
+            var sortField; 
+            switch(searchedTopicId){
+                case "most-viewed":
+                // captionTopic="Most Viewed";
+                sortField="views";
+                break;
+                case "most-liked":
+                // captionTopic="Most Liked";
+                sortField="likes";
+                break;
+                case "most-disliked":
+                // captionTopic="Most Disliked";
+                sortField="dislikes";
+                break;
+                case "most-commented":
+                // captionTopic="Most Commented";
+                sortField="comment_count";
+                break;
+            }
+
+            var table = document.getElementById("ranking-table");
+
+            var caption = document.createElement("caption");
+            // caption.innerHTML = regionData[searchedRegionId].name
+            //                     +" "+captionTopic
+            //                     +" "+categoryData[searchedRegionId][searchedCategoryId].title
+            //                     +" Videos";
+            caption.innerHTML = getCaptionText(searchedRegionId, searchedCategoryId, searchedTopicId);
+            // table.append(
+            //     $("<caption></caption>").html(
+            //         regionData[searchedRegionId].name
+            //         +" "+captionTopic
+            //         +" "+categoryData[searchedRegionId][searchedCategoryId].title
+            //         +" Videos")
+            //     );
+            table.appendChild(caption);
+
+            // var thead = $("<thead></thead>");
+     
+            var thead = document.createElement("thead");
+           
+            // thead.append($("<th></th>").html("Rank"))
+
+            var thRank = document.createElement("th");
+            thRank.innerHTML = "Rank";
+            thead.appendChild(thRank);
+
+            // thead.append($("<th></th>").html("Image"))
+
+            var thThumbnail = document.createElement("th");
+            thThumbnail.innerHTML = "Thumbnail";
+            thead.appendChild(thThumbnail);
+
+            // thead.append($("<th></th>").html("Title"))
+
+            var thTitle = document.createElement("th");
+            thTitle.innerHTML = "Title";
+            thead.appendChild(thTitle);
+
+            // thead.append($("<th></th>").html("Category"))
+
+            var thCategory = document.createElement("th");
+            thCategory.innerHTML = "Category";
+            thead.appendChild(thCategory);
+
+            // thead.append($("<th></th>").html("#"+sortField))
+           
+            var thSortField = document.createElement("th");
+            thSortField.innerHTML = "#"+sortField;
+            thead.appendChild(thSortField);
+
+            // table.append(thead);
+            table.appendChild(thead);
+
+            var tbody = document.createElement("tbody");
+            table.appendChild(tbody);
+
+            // table.append($("<tbody></tbody>"))
+
+            for(var i=0;i<tableVideoData.length;i+=1){
+                //var tr = $("<tr></tr>");
+                var tr = document.createElement("tr");
+
+                var tdRank = document.createElement("td");
+                console.log(tdRank);
+                console.log(tdRank.style);
+                tdRank.style.textAlign = "center";
+                tdRank.innerHTML = (i+1);
+                tr.appendChild(tdRank);
+
+                // tr.append($("<td style='text-align: center;'></td>").html(i+1));
+
+                var tdThumbnail = document.createElement("td");
+                var imgThumbnail = document.createElement("img");
+                imgThumbnail.src = tableVideoData[i].thumbnail_link;
+                tdThumbnail.appendChild(imgThumbnail);
+                tr.appendChild(tdThumbnail);
+
+                // var img = $('<img />').attr("src", tableVideoData[i].thumbnail_link);
+                // tr.append($("<td></td>").append(img));
+                
+                var tdTitle = document.createElement("td");
+                tdTitle.style = "font-size:14px; padding:8px 8px 8px 8px;width:480px;";
+                tdTitle.innerHTML = tableVideoData[i].title;
+                tr.appendChild(tdTitle);
+
+                // tr.append($("<td style='font-size:14px;'></td>").html(tableVideoData[i].title));
+
+                // tr.append($("<td></td>").html(categoryData[searchedRegionId][tableVideoData[i].category_id].title));
+
+                var tdCategory = document.createElement("td");
+                tdCategory.innerHTML = categoryData[searchedRegionId][tableVideoData[i].category_id].title;
+                tr.appendChild(tdCategory);
+
+                // tr.append($("<td></td>").html(tableVideoData[i][sortField]));
+                
+                var tdSortField = document.createElement("td");
+                tdSortField.innerHTML = tableVideoData[i][sortField];
+                tr.appendChild(tdSortField);
+
+                // var url = $("<a>").attr("href","https://www.youtube.com/watch?v="+topVideoData[i].video_id);
+                // url.html("https://www.youtube.com/watch?v="+topVideoData[i].video_id);
+                // tr.append($("<td style='font-size:14px;'></td>").append(url));
+
+                tbody.appendChild(tr);
+                // $("tbody").append(tr);
+            }
+
+        }
+
+        function getCaptionText(regionId, categoryId, topicId){
+            switch(topicId){
+                case "most-viewed":
+                return regionData[regionId].name+" Most Viewed "+categoryData[regionId][categoryId].title+" Videos";
+                break;
+                case "most-liked":
+                return regionData[regionId].name+" Most Liked "+categoryData[regionId][categoryId].title+" Videos";
+                break;
+                case "most-disliked":
+                return regionData[regionId].name+" Most disliked "+categoryData[regionId][categoryId].title+" Videos";
+                break;
+                case "most-commented":
+                return regionData[regionId].name+" Most Commented "+categoryData[regionId][categoryId].title+" Videos";
+                break;
+            }
+        }
+
+        function onClickVideoThumbnail(index){
+    
+            var playerVideoData=searchedVideoData;
+            console.log(playerVideoData);
+
+            var videoId = playerVideoData[index].video_id;
+
+            document.getElementById('vid_frame').src="http://youtube.com/embed/"+videoId+"?autoplay=1&rel=0&showinfo=0&autohide=1";
+                    
+            var vidItems = document.getElementsByClassName("vid-item");
+            vidItems = Array.prototype.slice.call(vidItems);
+
+            if(vidItems[selectedVideoIndex]!=null){
+                vidItems[selectedVideoIndex].style.backgroundColor = "rgba(0, 0, 0, 0)";
+            }
+
+            selectedVideoIndex = index;
+
+            vidItems[selectedVideoIndex].style.backgroundColor = "rgba(96, 96, 96, 0.8)";
+
+            document.getElementById('vid-title').innerHTML = playerVideoData[index].title;
+            document.getElementById('vid-rank').innerHTML = "No."+(index+1)+" ";
+            // if(index==0){
+            //     document.getElementById('vid-medal').setAttribute("src","imgs/gold-medal.png");
+            // }else if(index==1){
+            //     document.getElementById('vid-medal').setAttribute("src","imgs/silver-medal.png");
+            // }else if(index==2){
+            //     document.getElementById('vid-medal').setAttribute("src","imgs/bronze-medal.png");
+            // }else{
+            //     document.getElementById('vid-medal').setAttribute("src","");
+            // }
+        }
+
+        function cleanBarGraph(){
+            var barGraph = document.getElementById("bar-graph");
+                while (barGraph.firstChild) {
+                    barGraph.removeChild(barGraph.firstChild);
+                }
+        }
+
+        function loadBarGraph(data, topicId, title){
+    
+            var graphData=data;
+            if(graphData.length==0){
+                return;
+            }
+            
+            var xAxisField;
+            var yAxisField;
+            var tipIndexField;
+            var yAxisLabel;
+        
+            var width = 720;
+            var height = data.length*48;
+
+            var xAxisFontSize = 12;
+            var yAxisFontSize = 12;
+        
+            var yAxisFormatFunc=function(d) { return Math.round(d); };
+                
+            switch(topicId){        
+
+                case "most-viewed":
+                    yAxisField='views';
+                    yAxisLabel = "#views";
+                    xAxisField='title';
+                    tipIndexField="title";
+                  
+                    break;
+                case "most-liked":
+                    yAxisField='likes';
+                    yAxisLabel = "#likes";
+                    xAxisField='title';
+                    tipIndexField="title";
+                    break;
+                case "most-disliked":
+                    yAxisField='dislikes';
+                    yAxisLabel = "#dislikes";
+                    xAxisField='title';
+                    tipIndexField="title";
+                    break;
+                case "most-commented":
+                    yAxisField='comment_count';
+                    yAxisLabel = "#comments";
+                    xAxisField='title';
+                    tipIndexField="title";
+                    break;
+                case "CategoryVideoNum":
+                    yAxisField='video_num';
+                    yAxisLabel = "Trending Video Number";
+                    xAxisField='title';
+                    tipIndexField="title";
+                    break;
+                case "CategoryViews":
+                    yAxisField='views';
+                    yAxisLabel = "Total Number of Views";
+                    yAxisFormatFunc = function(d) { return Math.round(d/1000)+'k'; };
+                    xAxisField='title';
+                    tipIndexField="title";
+                    break;
+                case "CategoryAverageViews":
+                    yAxisField='average_views';
+                    yAxisLabel = "Average Number of Views";
+                    xAxisField='title';
+                    tipIndexField="title";
+                    break;  
+                case "RegionsVideoNum":
+                    yAxisField='video_num';
+                    yAxisLabel = "Trending Video Number";
+                    width = 1280;
+                    height = 600;
+                    xAxisFontSize=18;
+                    yAxisFontSize=18;
+                    xAxisField='name';
+                    tipIndexField="name";
+                    break;      
+            
+            } 
+
+            var titleHeight = 0;
+            if(title!=null){
+                titleHeight = 96;
+            }
+
+            margin = {top: 48, right: 120, bottom: 0, left: 120};
+            // width = width - margin.left - margin.right;
+            // height = height - margin.top - margin.bottom;
+
+            var x = d3.scaleBand()
+                    .rangeRound([titleHeight+20, titleHeight+20+height])
+                    .paddingInner(.1);
+
+            var y = d3.scaleLinear()
+                .range([0, width]);
+
+            var xAxis = d3.axisLeft(x);
+            var yAxis = d3.axisTop(y).tickFormat(yAxisFormatFunc);
+
+            var tip = d3.tip()
+            .attr('class', 'd3-tip')
+            .offset([-10, 0])
+            .html(function(d) {
+                return "<b style='color:lightcoral'>No."+(data.indexOf(d)+1)+"&nbsp</b>"+
+                "<span style='color:white'>" + d[tipIndexField]+ "</span>"+"<br><br>"+
+                "<b>#"+yAxisField+": </b> <span style='color:yellow'>" + d[yAxisField] + "</span>";
+            })
+
+            var svg = d3.select("#bar-graph").append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom + titleHeight + 20)
+            .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            svg.call(tip);
+
+            if(title!=null){
+                svg.append("text")
+             
+                .attr("x", width/2)
+                .attr("y", 32)
+                .style("font-size", 22)
+                .attr("height",titleHeight)
+    
+                .style("fill", 'black')
+                .attr("text-anchor", 'middle')
+                .text(title);
+                
+            }
+
+            x.domain(graphData.map(function(d){
+                return d[xAxisField];}
+            ));
+
+            y.domain([0, d3.max(graphData, function(d){
+                return d[yAxisField];}
+            )]);
+
+            svg.append("g")
+                .attr("class", "x axis")
+                .call(xAxis);
+
+            svg.select(".x.axis")
+                .selectAll("text")
+                .style("font-size","12px")
+                .each(function(){wrap(this,112);});
+
+            svg.append("g")
+                .attr("class", "y axis")
+                .attr("transform","translate(0,"+titleHeight+")")
+                .call(yAxis)
+          
+
+            svg.append("text")
+                .attr("x", width)
+                .attr("y", titleHeight+6)
+                .attr("dy", ".72em")
+                .style("text-anchor", "end")
+                .text(yAxisLabel);
+
+            svg.selectAll(".bar")
+                .data(graphData)
+            .enter().append("rect")
+                .attr("class", "bar")
+                .attr("y", function(d) { 
+                    return x(d[xAxisField]); 
+                })
+                .attr("height", x.bandwidth())
+
+                .attr("x", 0)
+                .attr("width", function(d) { 
+                    if(y(d[yAxisField])<1){
+                        return 1;
+                    }
+                    return y(d[yAxisField]); 
+                })
+                .on('mouseover', tip.show)
+                .on('mouseout', tip.hide)
+                return;
+
+        }
+
+        var wrap = function(element, width) {
+            var self = d3.select(element),
+                textLength = self.node().getComputedTextLength(),
+                text = self.text();
+            while (textLength > (width) && text.length > 0) {
+                text = text.slice(0, -1);
+                self.text(text + '...');
+                textLength = self.node().getComputedTextLength();
+            }
+        };
+
+        $(".arrow-right").bind("click", function (event) {
+            event.preventDefault();
+
+            $(".vid-list-container").stop().animate({
+                scrollLeft: "+=336"
+            }, 750);
+        });
+        $(".arrow-left").bind("click", function (event) {
+            event.preventDefault();
+
+            $(".vid-list-container").stop().animate({
+                scrollLeft: "-=336"
+            }, 750);
+        });
+    </script>
+  
 </body>
 </html>
