@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<title>W3.CSS Template</title>
+<title>Trending YouTube Video Data Visualization</title>
 <meta charset="UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -17,7 +17,7 @@
         letter-spacing: 5px;
     }
 
-    caption {   background-color:red; 
+    caption {   background-color:#f44336; 
                 color:white;
                 border:1px dotted;
                 font:bold 22px arial; 
@@ -27,7 +27,7 @@
                 vertical-align:middle;
                 }
 
-    th      {   background-color:red; 
+    th      {   background-color:#f44336; 
                 color:white;
                 font:bold 18px arial;
                 height:40px;
@@ -255,6 +255,7 @@
 <script src="scripts/d3.v4.js"></script>
 <script src="scripts/d3-tip.js"></script>
 <script src="scripts/jquery-2.0.3.min.js"></script>
+<script src="scripts/d3.layout.cloud.js"></script>
 
 <body>
     <div class="w3-top" >
@@ -264,7 +265,8 @@
                 <i class="fa fa-hand-o-left" style="position:absolute; font-size:24px; transform:translate(0px,-2px)"></i>
                 &nbsp&nbsp&nbsp&nbspClick to Go Home
             </span> -->
-            <span class="w3-bar-item w3-text-white w3-hover-red" style="padding-left:8px;">
+            <img src="imgs/youtube-top-nav-icon.png" style="position:absolute; width:32px;transform:translate(0px,6px)"></img>
+            <span class="w3-bar-item w3-text-white w3-hover-red" style="margin-left:28px;">
                 Trending YouTube Video Data Visualization
             </span>
 
@@ -295,6 +297,7 @@
             <div class="vid-container">
                 <iframe id="vid_frame" 
                     src="http://youtube.com/embed/SWOEVxpuiqE?autoplay=1&rel=0&showinfo=0&autohide=1&controls=0" 
+                    
                     frameborder="0">
                 </iframe>
                 <img id="404-img" style="position:relative; z-index:0; width:520px; height:320px; transform: translate(-50%, 0px);  left:50%;"  src="imgs/404.jpg"></img>
@@ -316,36 +319,36 @@
             <div style="margin:16px 16px 16px 16px;white-space:nowrap;">
                 Region&nbsp
                 <select id="select-region" style="width:320px" onchange="onSelectRegionChange()" >
-                    <option disabled selected value> -- select a region -- </option>
+                    <option disabled selected> -- select a region -- </option>
                 </select>
             </div>
             <div style="margin:16px 16px 16px 16px;white-space:nowrap;">
                 Video Category&nbsp
-                <select id="select-category" style="width:320px" >
-                    <option disabled selected value> -- select a category -- </option>
+                <select id="select-category" style="width:320px" onchange="onSelectCategoryChange(this)">
+                    <!-- <option disabled selected> -- select a category -- </option> -->
                 </select>
             </div>
             <div style="margin:16px 16px 16px 16px;white-space:nowrap;" >
                 Topic&nbsp
-                <select id="select-topic" style="width:320px">
-                    <option disabled selected value> -- select a topic -- </option>
+                <select id="select-topic" style="width:320px" onchange="onSelectTopicChange(this)">
+                    <!-- <option disabled selected> -- select a topic -- </option> -->
                 </select>
             </div>
-            <div style="margin:16px 16px 16px 16px;white-space:nowrap;">
-                <span id="text-max-search-number" >Maximum Search Number (<30)&nbsp</span>
+            <div id="div-max-search-num" style="margin:16px 16px 16px 16px;white-space:nowrap;display:none">
+                <span id="text-max-search-num" >Maximum Search Number (<30)&nbsp</span>
                 <!-- <select style="width:320px">
                     
                 </select> -->
-                <input id="input-max-search-number" type="number" name="quantity" min="1" max="30">
+                <input id="input-max-search-num" type="number" name="quantity" min="1" max="30">
             </div>
         </div>
 
-        <button class="button" style="font-size:20px;" onclick="onClickSearchButton()">
+        <button id="search-button" class="button" style="font-size:20px;" onclick="onClickSearchButton(this)">
             Let's See!
         </button>
    
 
-        <table id="ranking-table" align="center" style="margin-top:40px">
+        <table id="ranking-table" align="center" style="margin-top:48px">
 
         </table>
     
@@ -353,13 +356,15 @@
     
         </div>
 
-        <!-- <br> -->
-
-        <div id="pie-graph" style="padding:20px 0 20px 0">
+        <div id="pie-graph" align="center">
     
         </div>
         
-        <!-- <div id="tooltip" class="hidden" >
+        <div id="word-cloud-graph" align="center">
+    
+        </div>
+        
+        <div id="tooltip" style="display:none">
             <p style="margin-bottom:8px">
                 <strong id="pie-graph-tip-title">Important Label Heading</strong>
             </p>
@@ -369,19 +374,58 @@
             <p style="margin-bottom:0px">
                 <span id="pie-graph-tip-percent">50</span>
             </p>
-        </div> -->
+        </div>
 
         <div id="loading" style="padding-bottom:40px; padding-top:80px">
             <img src="imgs/loading.gif" style="width:256px"></img>
             <br>
-            <h2 style="color:#CC181E;">Please Wait Loading...</h2>    
+            <h2 id="loading-text" style="color:#CC181E;">Please Wait Loading...</h2>    
         </div>
+
+        <div>
+            <button style="font-size:20px; float: right; margin-right:8px; margin-bottom:8px" onclick="saveCachedSearchedDataToFile()">Save Cache</button>
+        </div> 
 
     </div>
 
     <!-- <script src="scripts/data-page-base.js"></script>
     <script src="scripts/data-page-regional.js"></script> -->
     <script>
+        var cachedSearchedDataFilename = "cached_searched_data.json";
+
+        function urlExists(url)
+        {
+            var http = new XMLHttpRequest();
+            http.open('HEAD', url, false);
+            http.send();
+
+            if(http.status!=404){
+                console.log("'"+url+"' file exists!")
+                return true;
+            }else{
+                console.log("'"+url+"' file doesn't exist!")
+                return false;
+            }
+        }
+
+        var cachedSearchedData = null;
+
+        function loadCachedData(){
+            if(urlExists("data/"+cachedSearchedDataFilename)){
+                $.getJSON("data/"+cachedSearchedDataFilename, function(data) { 
+                    cachedSearchedData=data;
+                    console.log("load cached searched data from file");
+                    console.log(cachedSearchedData);
+                }); 
+            }else{         
+                cachedSearchedData={};
+            }
+        }
+
+        loadCachedData();
+
+        var allCategoriesId = "99";
+
         var videoData=null;
         var categoryData=null;
 
@@ -394,11 +438,14 @@
 
         var headerText = "Trending YouTube Video Data Visualization";
         var maxSearchNumUpperbound = 100;
+        var graphCaptionFontSize=22;
+        var asynSearchVideoData = true;
+        var wordCloudMaxFontSize = 100;
 
         document.getElementById("page-heading-text").innerHTML = headerText;
         // document.getElementById("defaultOpen").click();
         document.getElementById("404-img").style.display = "none";
-        document.getElementById("text-max-search-number").innerHTML = "Maximum Search Number (<"+maxSearchNumUpperbound+")&nbsp"
+        document.getElementById("text-max-search-num").innerHTML = "Maximum Search Number (<"+maxSearchNumUpperbound+")&nbsp"
         document.getElementById("loading").style.display = "none";
 
         var regionData = {
@@ -431,8 +478,15 @@
             selectRegion.appendChild(option);
         }
 
+        function cleanSelectCategoryOptions(){
+            var selectCategory = document.getElementById("select-category");
+            while (selectCategory.firstChild) {
+                selectCategory.removeChild(selectCategory.firstChild);
+            }
+        }
+
         function loadSelectCategoryOptions(){
-            console.log("loadSelectCategoryOptions");
+           
             var selectRegion = document.getElementById("select-region");
             var selectedRegionId = selectRegion.options[selectRegion.selectedIndex].value;
 
@@ -441,9 +495,14 @@
                 return;
             }
 
-            console.log(categoryData);
-
             var selectCategory = document.getElementById("select-category");
+
+            var option = document.createElement("option");
+            option.text = "-- select a category --";
+            option.disabled = true;
+            option.selected = true;
+            selectCategory.appendChild(option);
+
             for(var key in categoryData[selectedRegionId]){
                 if(categoryData[selectedRegionId].hasOwnProperty(key)){
                     var option = document.createElement("option");
@@ -453,13 +512,45 @@
                     selectCategory.appendChild(option);
                 }
             }
-
-            var option = document.createElement("option");
-            option.text = "All Categories";
-            option.value = "99";
-            selectCategory.appendChild(option);
         }
         
+        function cleanSelectTopicOptions(){
+            var selectTopic = document.getElementById("select-topic");
+            while (selectTopic.firstChild) {
+                selectTopic.removeChild(selectTopic.firstChild);
+            }
+        }
+
+        function loadSelectTopicOptions(){
+            var selectRegion = document.getElementById("select-region");
+            var selectedRegionId = selectRegion.options[selectRegion.selectedIndex].value;
+            var selectCategory = document.getElementById("select-category");
+            var selectedCategoryId = selectCategory.options[selectCategory.selectedIndex].value;
+
+            var selectTopic = document.getElementById("select-topic");
+
+            var option = document.createElement("option");
+            option.text = "-- select a topic --";
+            option.disabled = true;
+            option.selected = true;
+            selectTopic.appendChild(option);
+
+            for(var key in topicsOption){
+                var option = document.createElement("option");
+
+                if(topicsOption[key].categoryId==allCategoriesId 
+                && selectedCategoryId!=allCategoriesId){
+                    continue;
+                }
+
+                option.text = topicsOption[key].text;
+                option.value = key;
+                selectTopic.appendChild(option);
+            }
+
+            onSelectTopicChange(selectTopic);
+        }
+
         function includeOrNot(idSet,id){
             var included = false;
             
@@ -475,7 +566,7 @@
 
         var topicsOption = {
             "most-viewed":{
-                text:"Most Viewed Videos" 
+                text:"Most Viewed Videos"
             },
             "most-liked":{
                 text:"Most Liked Videos"
@@ -485,19 +576,43 @@
             },
             "most-commented":{
                 text:"Most Commented Videos"
+            },
+            "highest-likes-to-dislikes":{
+                text:"Videos with Highest Likes-to-Dislikes Ratios"
+            },
+            "highest-dislikes-to-likes":{
+                text:"Videos with Highest Dislikes-to-Likes Ratios"
+            },
+            "title-word-cloud":{
+                text:"Video Title Word Cloud"
+            },
+            "tag-word-cloud":{
+                text:"Video Tag Word Cloud"
+            },
+            "categories-video-num":{
+                text:"Categories Trending Video Number",
+                categoryId:allCategoriesId
+            },
+            "categories-views":{
+                text:"Categories Views",
+                categoryId:allCategoriesId
+            },
+            "categories-likes":{
+                text:"Categories Likes",
+                categoryId:allCategoriesId
+            },
+            "categories-dislikes":{
+                text:"Categories Dislikes",
+                categoryId:allCategoriesId
+            },
+            "categories-comments":{
+                text:"Categories Comments",
+                categoryId:allCategoriesId
             }
         }
 
-        var selectTopic = document.getElementById("select-topic");
-        for(var key in topicsOption){
-            var option = document.createElement("option");
-            option.text = topicsOption[key].text;
-            option.value = key;
-            selectTopic.appendChild(option);
-        }
-
         function loadRegionCategoryData(regionId, callback){
-            console.log("loadCategoryData");
+           
             if(categoryData==null){
                 categoryData = {};
             }
@@ -518,9 +633,10 @@
                     var categoryTitle = categoryItems[i].snippet.title;
                     temp[categoryId]={};
                     temp[categoryId].title = categoryTitle;
-                    temp[categoryId].video_num = 0;
-                    temp[categoryId].views = 0;
                 }
+
+                temp[allCategoriesId]={};
+                temp[allCategoriesId].title = "All Categories";
 
                 categoryData[regionId]=temp;
 
@@ -531,9 +647,6 @@
         }
 
         function getVideoDataFilename(regionId){
-            // console.log("getCategoryDataFilename");
-         
-            console.log("data/video_data_"+regionId+".csv");
             return "data/video_data_"+regionId+".csv";
         }
 
@@ -541,21 +654,11 @@
             if(regionId=="gl"){
                 return "data/category_data_us.json";
             }
-            // console.log("getCategoryDataFilename");
-            // console.log("data/category_data_"+regionId+".json");
+
             return "data/category_data_"+regionId+".json";
         }
-        // function loadSelectOptions(selectId, options){
-        //     var selectTopic = document.getElementById(selectId);
-        //     for(var i=0;i<options.length;i+=1){
-        //         var option = document.createElement("option");
-        //         option.text = options[i].text;
-        //         option.value = options[i].value;
-        //         selectTopic.appendChild(option);
-        //     }
-        // }
 
-        function onClickSearchButton(){
+        function onClickSearchButton(button){
   
             var selectRegion = document.getElementById("select-region");
             var regionId = selectRegion.options[selectRegion.selectedIndex].value;
@@ -566,40 +669,292 @@
             var selectTopic = document.getElementById("select-topic");
             var topicId = selectTopic.options[selectTopic.selectedIndex].value;
 
-            var maxSearchNumber = document.getElementById("input-max-search-number").value;
+            switch(topicId){
+                case "most-viewed":
+                case "most-liked":
+                case "most-disliked":
+                case "most-commented":
+                case "highest-likes-to-dislikes":
+                case "highest-dislikes-to-likes":
+                    var maxSearchNumber = document.getElementById("input-max-search-num").value;
 
-            if(maxSearchNumber==""){
-                alert("Please enter the maximum search number.");
-            }else if (maxSearchNumber<1){
-                alert("Maximum search number should not be smaller than 1.");
-            }else if (maxSearchNumber>maxSearchNumUpperbound){
-                alert("Maximum search number should not be bigger than "+maxSearchNumUpperbound+".");
-            }else{
-                cleanRankingTable();
-                cleanBarGraph();    
-                document.getElementById("loading").style.display = "block";
-
-                searchVideoData(regionId, categoryId, topicId, maxSearchNumber,
-                    function(){                                
-
-                        loadVideoPlayer();
-                        loadRankingTable();
-                        loadBarGraph(
-                            searchedVideoData,
-                            searchedTopicId,
-                            getCaptionText(regionId, categoryId, topicId)
-                        );
-
-                        document.getElementById("loading").style.display = "none";
-                    });
-           
-                // loadVideoPlayer();
+                    if(maxSearchNumber==""){
+                        alert("Please enter the maximum search number.");
+                        return;
+                    }else if (maxSearchNumber<1){
+                        alert("Maximum search number should not be smaller than 1.");
+                        return;
+                    }else if (maxSearchNumber>maxSearchNumUpperbound){
+                        alert("Maximum search number should not be bigger than "+maxSearchNumUpperbound+".");
+                        return;
+                    }                   
             }
-            // console.log(inputMaxSearchNumber.value=="");
+            
+            button.disabled = true;
+            cleanVideoPlayer();
+            cleanRankingTable();
+            cleanBarGraph(); 
+            cleanPieGraph();
+            cleanWordCloudGraph();
+            document.getElementById("loading-text").innerHTML="Please Wait Loading..."
+            document.getElementById("loading").style.display = "block";
+
+            searchedRegionId = regionId;
+            searchedCategoryId = categoryId;
+            searchedTopicId = topicId;
+
+            if(regionId=="gl"){
+                switch(topicId){
+                case "categories-video-num":
+                case "categories-views":
+                case "categories-likes":
+                case "categories-dislikes":
+                case "categories-comments":
+                case "title-word-cloud":
+                case "tag-word-cloud":
+                    var callback1;
+                    switch(topicId){
+                        case "categories-video-num":
+                        callback1 = function(){
+                            
+                            loadPieGraph(
+                                searchedVideoData, 
+                                getCaptionText(Object.keys(regionData)[i], categoryId, topicId),
+                                "title",
+                                "video_num",
+                                "video_num_percent");
+                        };
+                        break;
+                        case "categories-views":
+                        callback1 = function(){
+                            loadPieGraph(
+                                searchedVideoData, 
+                                getCaptionText(Object.keys(regionData)[i], categoryId, topicId),
+                                "title",
+                                "views",
+                                "views_percent");
+                        };
+                        break;
+                        case "categories-likes":
+                        callback1 = function(){
+                            loadPieGraph(
+                                searchedVideoData, 
+                                getCaptionText(Object.keys(regionData)[i], categoryId, topicId),
+                                "title",
+                                "likes",
+                                "likes_percent");
+                        };
+                        break;
+                        case "categories-dislikes":
+                        callback1 = function(){
+                                loadPieGraph(
+                                    searchedVideoData, 
+                                    getCaptionText(Object.keys(regionData)[i], categoryId, topicId),
+                                    "title",
+                                    "dislikes",
+                                    "dislikes_percent");
+                            };
+                            break;
+                        case "categories-comments":
+                        callback1 = function(){
+                                loadPieGraph(
+                                    searchedVideoData, 
+                                    getCaptionText(Object.keys(regionData)[i], categoryId, topicId),
+                                    "title",
+                                    "comment_count",
+                                    "comment_count_percent");
+                            };
+                            break;
+                        case "title-word-cloud":                            
+                        case "tag-word-cloud":
+                            callback1 = function(){
+                                loadWordCloudGraph(
+                                    searchedVideoData,
+                                    getCaptionText(Object.keys(regionData)[i], categoryId, topicId));
+                            };
+                            break;
+                    }
+
+                    var i=0;
+                    if(Object.keys(regionData)[i]=="gl"){
+                        i+=1;        
+                    }
+
+                    var callback2 = function(){
+
+                        callback1();
+
+                        i+=1;
+
+                        switch(topicId){
+                            case "categories-video-num":
+                            case "categories-views":
+                            case "categories-likes":
+                            case "categories-dislikes":
+                            case "categories-comments":
+                                if(Object.keys(regionData)[i]=="gl"){
+                                    i+=1;        
+                                }
+                            break;
+                        }
+
+                        if(i<Object.keys(regionData).length){
+                            searchVideoData(Object.keys(regionData)[i], categoryId, topicId, maxSearchNumber,asynSearchVideoData,callback2);               
+                        }else{
+                            document.getElementById("loading").style.display = "none";
+                            button.disabled = false;
+                        }
+                    
+                    }
+                    searchVideoData(Object.keys(regionData)[i], categoryId, topicId, maxSearchNumber,asynSearchVideoData,callback2);
+                    return;
+                }
+            }
+            
+            searchVideoData(regionId, categoryId, topicId, maxSearchNumber,asynSearchVideoData,function(){                                
+
+                    switch(topicId){
+                        case "most-viewed":                        
+                        case "most-liked":                        
+                        case "most-disliked":                        
+                        case "most-commented":
+                        case "highest-likes-to-dislikes":
+                        case "highest-dislikes-to-likes":
+                            var sortField;
+                            switch(topicId){
+                                case "most-viewed":
+                                sortField="views";
+                                break
+                                case "most-liked":
+                                sortField="likes";
+                                break
+                                case "most-disliked":
+                                sortField="dislikes";
+                                break
+                                case "most-commented":
+                                sortField="comment_count";
+                                break;
+                                case "highest-likes-to-dislikes":
+                                sortField="likes_to_dislikes";
+                                break;
+                                case "highest-dislikes-to-likes":
+                                sortField="dislikes_to_likes";
+                                break;
+                            }
+                            loadVideoPlayer();
+                            loadRankingTable();
+                            loadBarGraph(
+                                searchedVideoData,
+                                getCaptionText(regionId, categoryId, topicId),
+                                "video_id",
+                                sortField,
+                                "title"
+                            );                            
+                        break;
+
+                        case "title-word-cloud":
+                        case "tag-word-cloud":
+
+                            loadWordCloudGraph(
+                                searchedVideoData,
+                                getCaptionText(regionId, categoryId, topicId));
+                            
+                            break;
+
+                        case "categories-video-num":
+                            
+                            loadPieGraph(
+                                searchedVideoData,
+                                getCaptionText(regionId, categoryId, topicId),
+                                "title",
+                                "video_num",
+                                "video_num_percent");
+
+                            break;
+                        case "categories-views":
+                        case "categories-likes":
+                        case "categories-dislikes":
+                        case "categories-comments":
+
+                            var sortField;
+                            switch(topicId){
+                                case "categories-views":
+                                sortField="views";
+                                break
+                                case "categories-likes":
+                                sortField="likes";
+                                break
+                                case "categories-dislikes":
+                                sortField="dislikes";
+                                break
+                                case "categories-comments":
+                                sortField="comment_count";
+                                break;
+                            }
+
+                            var sortedData = JSON.parse(JSON.stringify(searchedVideoData));
+                            sortedData = sortedData.sort(
+                                function(a,b){
+                                    return b[sortField]-a[sortField];
+                                });
+
+                            loadBarGraph(
+                                sortedData,
+                                getCaptionText(regionId, categoryId, topicId),
+                                "title",
+                                sortField,
+                                "title",
+                                function(d) { return Math.round(d/1000000)+'m'; }
+                            );
+                          
+                            loadPieGraph(
+                                searchedVideoData,
+                                getCaptionText(regionId, categoryId, topicId),
+                                "title",
+                                sortField,
+                                sortField+"_percent");
+
+                            break;
+                    }
+
+                    document.getElementById("loading").style.display = "none";
+                    button.disabled = false;
+                });
+           
         }
 
         function onSelectRegionChange(){
-            loadSelectCategoryOptions();
+            cleanSelectCategoryOptions();
+            cleanSelectTopicOptions();
+            loadSelectCategoryOptions();           
+        }
+
+        function onSelectCategoryChange(select){
+            cleanSelectTopicOptions();
+            loadSelectTopicOptions();
+        }
+
+        function onSelectTopicChange(select){
+
+            var topicId = select.options[select.selectedIndex].value;
+
+            var divMaxSearchNum = document.getElementById("div-max-search-num");
+
+            switch(topicId){
+                case "most-viewed":
+                case "most-liked":
+                case "most-disliked":
+                case "most-commented":
+                case "highest-likes-to-dislikes": 
+                case "highest-dislikes-to-likes":                  
+                    divMaxSearchNum.style.display = "block";
+                break;
+                case "title-word-cloud":
+                case "tag-word-cloud":
+                default:
+                    divMaxSearchNum.style.display = "none";
+                break;
+            }
         }
 
         function iterateLoadRegionVideoData(i,tempGlobalVideoData,callback){
@@ -704,17 +1059,387 @@
                 });
         }
 
-        function searchVideoData(regionId, categoryId, topicId, maxSearchNum, callback){
-            console.log("searchVideoData");
-            console.log(videoData);
-            
+        function iterateCountWords(
+            i,regionId, categoryId, topicId, tempWordsCount, videoIdSet, callback)
+            {
+            console.log("iterateCountWords");
+            console.log(i);
+            document.getElementById("loading-text").innerHTML="Loading "+i+" / "+videoData[regionId].length;
+
+            if(categoryId==allCategoriesId || videoData[regionId][i].category_id==categoryId){
+                if(includeOrNot(videoIdSet,videoData[regionId][i].video_id)==false){
+                    
+                    var wordArray;
+                    if(topicId == "title-word-cloud"){
+                        var title = videoData[regionId][i].title;
+                        title = title.replace(/[‘’“”?.,\/#!$%\^&\*;:{}=\-_`~()]/g,"");
+                        wordArray = title.split(/[ ]+/);
+                    }else if(topicId=="tag-word-cloud"){
+                        var tags = videoData[regionId][i].tags;
+                        // tags = title.replace(/[‘’“”?.,\/#!$%\^&\*;:{}=\-_`~()]/g,"");
+                        wordArray = tags.split("|");
+                    }                            
+                
+                    for(var j=0;j<wordArray.length;j+=1){
+                        var word = wordArray[j];
+                        word = word.toLowerCase();
+                        if(word in tempWordsCount){
+                            tempWordsCount[word]+=1;
+                        }else{
+                            tempWordsCount[word]=1;
+                        }
+                    }
+
+                    videoIdSet.push(videoData[regionId][i].video_id);
+                }
+            }
+
+            i+=1;
+            if(i<videoData[regionId].length){
+                setTimeout(
+                    function(){
+                        iterateCountWords(i,regionId, categoryId, topicId, tempWordsCount, videoIdSet, callback);
+                    },0);                
+            }else{
+                if(callback!=null){
+                    callback();
+                }
+            }
+        }
+
+        function iterateCountPopularityForCategories(
+            i, dataSorted, sortField, categoriesCount, totalCount, videoIdSet, callback)
+            {
+                console.log("iterateCountPopularityForCategories");
+                console.log(i);
+                document.getElementById("loading-text").innerHTML="Loading "+i+" / "+dataSorted.length;
+
+                if(includeOrNot(videoIdSet,dataSorted[i].video_id)==false){
+                    if(categoriesCount[dataSorted[i].category_id]!=null){
+                        categoriesCount[dataSorted[i].category_id]+=dataSorted[i][sortField];                                
+                    }else{
+                        categoriesCount[dataSorted[i].category_id]=dataSorted[i][sortField];
+                    }
+                    totalCount+=dataSorted[i][sortField];
+                    
+                    videoIdSet.push(dataSorted[i].video_id);
+                }
+                // }
+
+            i+=1;
+            if(i<dataSorted.length){
+                setTimeout(
+                    function(){
+                        iterateCountPopularityForCategories(i, dataSorted, sortField, categoriesCount, totalCount, videoIdSet, callback);
+                    },0);                
+            }else{               
+                if(callback!=null){
+                    callback();
+                }
+            }
+        }
+
+        function iterateCountVideoNumForCategories(
+            i,regionId,categoriesCount,videoIdSet,callback)
+        {
+            document.getElementById("loading-text").innerHTML="Loading "+i+" / "+videoData[regionId].length;
+
+            if(includeOrNot(videoIdSet,videoData[regionId][i].video_id)==false){
+                if(categoriesCount[videoData[regionId][i].category_id]!=null){
+                    categoriesCount[videoData[regionId][i].category_id]+=1;
+                }else{
+                    categoriesCount[videoData[regionId][i].category_id]=1;
+                }
+                
+                videoIdSet.push(videoData[regionId][i].video_id);
+            }
+
+            i+=1;
+            if(i<videoData[regionId].length){
+                setTimeout(
+                    function(){
+                        iterateCountVideoNumForCategories(i,regionId,categoriesCount,videoIdSet,callback);
+                    },0);                
+            }else{               
+                if(callback!=null){
+                    callback();
+                }
+            }
+        }
+
+        function searchVideoData(regionId, categoryId, topicId, maxSearchNum, async, callback){
 
             if(videoData==null || videoData[regionId]==null){
+
                 loadRegionVideoData(regionId, function(){
-                    searchVideoData(regionId, categoryId, topicId, maxSearchNum, callback);
+                    searchVideoData(regionId, categoryId, topicId, maxSearchNum, async, callback);
                     }
                 );
                 return;
+            }
+
+            if(categoryData[regionId]==null){
+                loadRegionCategoryData(regionId,function(){
+                    searchVideoData(regionId, categoryId, topicId, maxSearchNum, async, callback);
+                });
+                return;
+            }
+            
+            var cached = getCachedSearchedData(regionId,categoryId,topicId);
+            if(cached!=null){
+                searchedVideoData = cached;
+
+                if(callback!=null){
+                    callback();
+                }
+                return;
+            }
+
+            switch(topicId){
+                case "categories-views":
+                case "categories-likes":
+                case "categories-dislikes":
+                case "categories-comments":                 
+
+                    var sortField;
+                    switch(topicId){
+                        case "categories-views":
+                        sortField="views";
+                        break;
+                        case "categories-likes":
+                        sortField="likes";
+                        break;
+                        case "categories-dislikes":
+                        sortField="dislikes";
+                        break;
+                        case "categories-comments":
+                        sortField="comment_count";
+                        break;
+                    }
+
+                    var dataSorted = videoData[regionId].slice(0);
+                    dataSorted.sort(
+                        function(a,b){
+                            return b[sortField]-a[sortField];
+                        });
+
+                    var videoIdSet = [];
+                    var categoriesCount = {};
+                    var totalCount = 0;
+
+                    if(async){
+                        setTimeout(
+                        function(){
+                            iterateCountPopularityForCategories(
+                                0, dataSorted, sortField, categoriesCount,totalCount, videoIdSet,
+                                function(){
+                                    var temp = [];
+
+                                    for(var key in categoriesCount){
+                                        e = {};
+                                        e.title = categoryData[regionId][key].title;
+                                        e[sortField]=categoriesCount[key];
+                                        e[sortField+"_percent"]=Math.round(categoriesCount[key]/totalCount*1000)/10;
+                                        temp.push(e);
+                                    }
+
+                                    searchedVideoData = temp;                    
+                                    cacheSearchedData(searchedVideoData,regionId,categoryId,topicId);
+
+                                    if(callback!=null){
+                                        callback();
+                                    }
+                                });
+                        },0);
+                    }else{
+                        for(var i=0;i<dataSorted.length;i+=1){
+                            if(includeOrNot(videoIdSet,dataSorted[i].video_id)==false){
+                                if(categoriesCount[dataSorted[i].category_id]!=null){
+                                    categoriesCount[dataSorted[i].category_id]+=dataSorted[i][sortField];                                
+                                }else{
+                                    categoriesCount[dataSorted[i].category_id]=dataSorted[i][sortField];
+                                }
+                                totalCount+=dataSorted[i][sortField];
+                                
+                                videoIdSet.push(dataSorted[i].video_id);
+                            }
+                        }
+
+                        var temp = [];
+
+                        for(var key in categoriesCount){
+                            e = {};
+                            e.title = categoryData[regionId][key].title;
+                            e[sortField]=categoriesCount[key];
+                            e[sortField+"_percent"]=Math.round(categoriesCount[key]/totalCount*1000)/10;
+                            temp.push(e);
+                        }
+
+                        searchedVideoData = temp;
+                        cacheSearchedData(searchedVideoData,regionId,categoryId,topicId);
+
+                        if(callback!=null){
+                            callback();
+                        }
+                    }
+
+                    return;
+            }
+
+            if(topicId=="categories-video-num"){
+
+                var videoIdSet = [];
+                var categoriesCount = {};
+
+                if(async){
+                    setTimeout(
+                    function(){
+                        iterateCountVideoNumForCategories(
+                            0, regionId, categoriesCount, videoIdSet,
+                            function(){
+                                var temp = [];
+                                
+                                for(var key in categoriesCount){
+                                    if(categoryData[regionId][key]==null){
+                                        console.log(regionId+" category data missing key "+key);
+                                        continue;
+                                    }
+                                    temp.push({
+                                        title:categoryData[regionId][key].title,
+                                        video_num:categoriesCount[key],
+                                        video_num_percent:Math.round(categoriesCount[key]/videoIdSet.length*1000)/10
+                                    });
+                                }
+
+                                searchedVideoData = temp;
+                                cacheSearchedData(searchedVideoData,regionId,categoryId,topicId);
+
+                                if(callback!=null){
+                                    callback();
+                                }
+                            });
+                    },0);
+                
+                }else{
+                    for(var i=0;i<videoData[regionId].length;i+=1){
+                        if(includeOrNot(videoIdSet,videoData[regionId][i].video_id)==false){
+                            if(categoriesCount[videoData[regionId][i].category_id]!=null){
+                                categoriesCount[videoData[regionId][i].category_id]+=1;
+                            }else{
+                                categoriesCount[videoData[regionId][i].category_id]=1;
+                            }
+                            
+                            videoIdSet.push(videoData[regionId][i].video_id);
+                        }
+                    }
+
+                    var temp = [];
+       
+                    for(var key in categoriesCount){
+                        if(categoryData[regionId][key]==null){
+                            console.log(regionId+" category data missing key "+key);
+                            continue;
+                        }
+                        temp.push({
+                            title:categoryData[regionId][key].title,
+                            video_num:categoriesCount[key],
+                            video_num_percent:Math.round(categoriesCount[key]/videoIdSet.length*1000)/10
+                        });
+                    }
+
+                    searchedVideoData = temp;
+                    cacheSearchedData(searchedVideoData,regionId,categoryId,topicId);
+
+                    if(callback!=null){
+                        callback();
+                    }
+                }
+                return;
+            }
+
+            if(topicId=="title-word-cloud" || topicId=="tag-word-cloud"){
+    
+                var videoIdSet = [];
+                var tempWordsCount = {};      
+
+                if(async){
+
+                    setTimeout(
+                    function(){
+                        iterateCountWords(0, regionId, categoryId, topicId,
+                        tempWordsCount, videoIdSet,
+                            function(){
+      
+                                var tempWordCloudData = [];
+                                for(var key in tempWordsCount){
+                                    tempWordCloudData.push(
+                                        {
+                                            text:key,
+                                            size:tempWordsCount[key]
+                                        }
+                                    );
+                                }                  
+             
+                                searchedVideoData = tempWordCloudData;
+                                cacheSearchedData(searchedVideoData,regionId,categoryId,topicId);
+
+                                if(callback!=null){
+                                    callback();
+                                }
+                        });
+                    },0);
+                }else{
+                    for(var i=0;i<videoData[regionId].length;i+=1){
+                        if(categoryId==allCategoriesId || videoData[regionId][i].category_id==categoryId){
+                            if(includeOrNot(videoIdSet,videoData[regionId][i].video_id)==false){
+                                
+                                var wordArray;
+                                if(topicId == "title-word-cloud"){
+                                    var title = videoData[regionId][i].title;
+                                    title = title.replace(/[‘’“”?.,\/#!$%\^&\*;:{}=\-_`~()]/g,"");
+                                    wordArray = title.split(/[ ]+/);
+                                }else if(topicId=="tag-word-cloud"){
+                                    var tags = videoData[regionId][i].tags;
+                                    // tags = title.replace(/[‘’“”?.,\/#!$%\^&\*;:{}=\-_`~()]/g,"");
+                                    wordArray = tags.split("|");
+                                }                            
+                            
+                                for(var j=0;j<wordArray.length;j+=1){
+                                    var word = wordArray[j];
+                                    word = word.toLowerCase();
+                                    if(word in tempWordsCount){
+                                        tempWordsCount[word]+=1;
+                                    }else{
+                                        tempWordsCount[word]=1;
+                                    }
+                                }
+
+                                videoIdSet.push(videoData[regionId][i].video_id);
+                            }
+                        }
+                    }
+                  
+                    var tempWordCloudData = [];
+                    for(var key in tempWordsCount){
+                        tempWordCloudData.push(
+                            {
+                                text:key,
+                                size:tempWordsCount[key]
+                            }
+                        );
+                    }
+                    
+                    searchedVideoData = tempWordCloudData;
+                    cacheSearchedData(searchedVideoData,regionId,categoryId,topicId);
+
+                    if(callback!=null){
+                        callback();
+                    }
+
+                }
+                
+                return;
+            
             }
 
             var sortField;
@@ -733,21 +1458,61 @@
                 break;
             }
             
-            dataSorted = videoData[regionId].slice(0)
-            dataSorted.sort(
-                function(a,b){
+            var sortFunc;
+            switch(topicId){
+                case "most-viewed":              
+                case "most-liked":               
+                case "most-disliked": 
+                case "most-commented":
+                sortFunc = function(a,b){
                     return b[sortField]-a[sortField];
-                });
+                };
+                break;
+                case "highest-likes-to-dislikes":
+                sortFunc = function(a,b){
+                    if(a["dislikes"]==0){
+                        return 1;
+                    }
+                    if(b["dislikes"]==0){
+                        return -1;
+                    }
+                    return b["likes"]/b["dislikes"]-a["likes"]/a["dislikes"];
+                };
+                break;
+                case "highest-dislikes-to-likes":
+                sortFunc = function(a,b){
+                    if(a["likes"]==0){
+                        return 1;
+                    }
+                    if(b["likes"]==0){
+                        return -1;
+                    }
+                    return b["dislikes"]/b["likes"]-a["dislikes"]/a["likes"];
+                };
+                break;
+            }          
+            
+            var dataSorted = videoData[regionId].slice(0);
+            dataSorted.sort(sortFunc);
 
             var videoIdSet = [];
             var temp=[];
 
             for(var i=0;i<dataSorted.length && temp.length<maxSearchNum;i+=1){
  
-                if(categoryId=="99" || dataSorted[i].category_id==categoryId){
+                if(categoryId==allCategoriesId || dataSorted[i].category_id==categoryId){
                     if(includeOrNot(videoIdSet,dataSorted[i].video_id)==false){
          
                         videoIdSet.push(dataSorted[i].video_id);
+                        switch(topicId){                           
+                            case "highest-likes-to-dislikes":
+                                dataSorted[i]["likes_to_dislikes"]=Math.round(dataSorted[i]["likes"]/dataSorted[i]["dislikes"]*10)/10;
+                            break;
+                            case "highest-dislikes-to-likes":                       
+                                dataSorted[i]["dislikes_to_likes"]=Math.round(dataSorted[i]["dislikes"]/dataSorted[i]["likes"]*1000)/1000;
+                            break;
+                        }        
+                        
                         temp.push(dataSorted[i]);
                     }
                 }
@@ -758,37 +1523,57 @@
             }
 
             searchedVideoData = temp;
-            searchedRegionId = regionId;
-            searchedCategoryId = categoryId;
-            searchedTopicId = topicId;
 
             if(callback!=null){
                 callback();
             }
-            // return temp;
-            // videoIdSet = [];
-            // dataDeduplicated=[];
 
-            // deduplicateSortedData(dataSorted,0,videoIdSet,dataDeduplicated,maxSearchNum,
-            //     function(){
-            //         mostViewed = dataDeduplicated;
-            //         if(callback!=null){
-            //             callback();
-            //         }
-            //     }
-            // );
+        }
+
+        function getRegionCategoriesVideoNum(regionId){
+            console.log("getRegionCategoriesVideoNum for "+regionId);
+
+            var videoIdSet = [];
+            var categoriesCount = {};
+
+            for(var i=0;i<videoData[regionId].length;i+=1){
+                if(includeOrNot(videoIdSet,videoData[regionId][i].video_id)==false){
+                    if(categoriesCount[videoData[regionId][i].category_id]!=null){
+                        categoriesCount[videoData[regionId][i].category_id]+=1;
+                    }else{
+                        categoriesCount[videoData[regionId][i].category_id]=1;
+                    }
+                    
+                    videoIdSet.push(videoData[regionId][i].video_id);
+                }
+            }
+
+            var temp = [];
+            console.log(categoryData);
+            for(var key in categoriesCount){
+                temp.push({
+                    title:categoryData[regionId][key].title,
+                    video_num:categoriesCount[key],
+                    video_num_percent:Math.round(categoriesCount[key]/videoIdSet.length*1000)/10
+                });
+            }
+            return temp;
+        }
+
+        function cleanVideoPlayer(){
+            var vidList = document.getElementById("vid-list");
+       
+            while (vidList.firstChild) {
+                vidList.removeChild(vidList.firstChild);
+            }
+
+            vidList.style.width=640+"px";
+            document.getElementById('vid-rank').innerHTML = "";
         }
 
         function loadVideoPlayer(){
            
             var vidList = document.getElementById("vid-list");
-            // while (tableElement.firstChild) {
-            //     tableElement.removeChild(tableElement.firstChild);
-            // }
-            console.log(vidList.childNodes);
-            while (vidList.firstChild) {
-                vidList.removeChild(vidList.firstChild);
-            }
 
             var playerVideoData=searchedVideoData;
 
@@ -873,7 +1658,7 @@
             }
 
             if(categoryData[searchedRegionId]==null){
-                loadRegionCategoryData(searchedRegionId,loadTable);
+                loadRegionCategoryData(searchedRegionId,loadRankingTable);
                 return;
             }
 
@@ -898,6 +1683,12 @@
                 case "most-commented":
                 // captionTopic="Most Commented";
                 sortField="comment_count";
+                break;
+                case "highest-likes-to-dislikes":
+                sortField="likes_to_dislikes";
+                break;
+                case "highest-dislikes-to-likes":
+                sortField="dislikes_to_likes";
                 break;
             }
 
@@ -965,8 +1756,7 @@
                 var tr = document.createElement("tr");
 
                 var tdRank = document.createElement("td");
-                console.log(tdRank);
-                console.log(tdRank.style);
+
                 tdRank.style.textAlign = "center";
                 tdRank.innerHTML = (i+1);
                 tr.appendChild(tdRank);
@@ -1012,18 +1802,48 @@
         }
 
         function getCaptionText(regionId, categoryId, topicId){
+            var categoryTitle;
+
+            if(categoryId==allCategoriesId){
+                categoryTitle=""
+            }else{
+                categoryTitle=categoryData[regionId][categoryId].title
+            }
+
             switch(topicId){
                 case "most-viewed":
-                return regionData[regionId].name+" Most Viewed "+categoryData[regionId][categoryId].title+" Videos";
+                return regionData[regionId].name+" Most Viewed "+categoryTitle+" Videos";
                 break;
                 case "most-liked":
-                return regionData[regionId].name+" Most Liked "+categoryData[regionId][categoryId].title+" Videos";
+                return regionData[regionId].name+" Most Liked "+categoryTitle+" Videos";
                 break;
                 case "most-disliked":
-                return regionData[regionId].name+" Most disliked "+categoryData[regionId][categoryId].title+" Videos";
+                return regionData[regionId].name+" Most disliked "+categoryTitle+" Videos";
                 break;
                 case "most-commented":
-                return regionData[regionId].name+" Most Commented "+categoryData[regionId][categoryId].title+" Videos";
+                return regionData[regionId].name+" Most Commented "+categoryTitle+" Videos";
+                break;
+                case "highest-likes-to-dislikes":
+                return regionData[regionId].name+" "+categoryTitle+" Videos with Highest Likes-to-Dislikes Ratios";
+                break;
+                case "highest-dislikes-to-likes":
+                return regionData[regionId].name+" "+categoryTitle+" Videos with Highest Dislikes-to-Likes Ratios";
+                break;
+                case "title-word-cloud":
+                return regionData[regionId].name+" "+categoryTitle+" Video Title Word Cloud";
+                case "tag-word-cloud":
+                return regionData[regionId].name+" "+categoryTitle+" Video Tag Word Cloud";
+                break;
+                case "categories-video-num":               
+                return regionData[regionId].name+" Categories Trending Video Number";
+                case "categories-views":
+                return regionData[regionId].name+" Categories Views";
+                case "categories-likes":
+                return regionData[regionId].name+" Categories Likes";
+                case "categories-dislikes":
+                return regionData[regionId].name+" Categories Dislikes";
+                case "categories-comments":
+                return regionData[regionId].name+" Categories Comments";
                 break;
             }
         }
@@ -1068,93 +1888,30 @@
                 }
         }
 
-        function loadBarGraph(data, topicId, title){
+        function loadBarGraph(data, title, xAxisField, yAxisField, tipIndexField,yAxisFormatFunc){
     
             var graphData=data;
+
             if(graphData.length==0){
                 return;
             }
             
-            var xAxisField;
-            var yAxisField;
-            var tipIndexField;
-            var yAxisLabel;
-        
             var width = 720;
             var height = data.length*48;
 
             var xAxisFontSize = 12;
             var yAxisFontSize = 12;
         
-            var yAxisFormatFunc=function(d) { return Math.round(d); };
-                
-            switch(topicId){        
-
-                case "most-viewed":
-                    yAxisField='views';
-                    yAxisLabel = "#views";
-                    xAxisField='title';
-                    tipIndexField="title";
-                  
-                    break;
-                case "most-liked":
-                    yAxisField='likes';
-                    yAxisLabel = "#likes";
-                    xAxisField='title';
-                    tipIndexField="title";
-                    break;
-                case "most-disliked":
-                    yAxisField='dislikes';
-                    yAxisLabel = "#dislikes";
-                    xAxisField='title';
-                    tipIndexField="title";
-                    break;
-                case "most-commented":
-                    yAxisField='comment_count';
-                    yAxisLabel = "#comments";
-                    xAxisField='title';
-                    tipIndexField="title";
-                    break;
-                case "CategoryVideoNum":
-                    yAxisField='video_num';
-                    yAxisLabel = "Trending Video Number";
-                    xAxisField='title';
-                    tipIndexField="title";
-                    break;
-                case "CategoryViews":
-                    yAxisField='views';
-                    yAxisLabel = "Total Number of Views";
-                    yAxisFormatFunc = function(d) { return Math.round(d/1000)+'k'; };
-                    xAxisField='title';
-                    tipIndexField="title";
-                    break;
-                case "CategoryAverageViews":
-                    yAxisField='average_views';
-                    yAxisLabel = "Average Number of Views";
-                    xAxisField='title';
-                    tipIndexField="title";
-                    break;  
-                case "RegionsVideoNum":
-                    yAxisField='video_num';
-                    yAxisLabel = "Trending Video Number";
-                    width = 1280;
-                    height = 600;
-                    xAxisFontSize=18;
-                    yAxisFontSize=18;
-                    xAxisField='name';
-                    tipIndexField="name";
-                    break;      
+            if(yAxisFormatFunc==null){
+                yAxisFormatFunc=function(d) { return Math.round(d); };
+            }
             
-            } 
-
             var titleHeight = 0;
             if(title!=null){
                 titleHeight = 96;
             }
 
             margin = {top: 48, right: 120, bottom: 0, left: 120};
-            // width = width - margin.left - margin.right;
-            // height = height - margin.top - margin.bottom;
 
             var x = d3.scaleBand()
                     .rangeRound([titleHeight+20, titleHeight+20+height])
@@ -1188,13 +1945,12 @@
              
                 .attr("x", width/2)
                 .attr("y", 32)
-                .style("font-size", 22)
+                .style("font-size", graphCaptionFontSize)
                 .attr("height",titleHeight)
     
                 .style("fill", 'black')
                 .attr("text-anchor", 'middle')
-                .text(title);
-                
+                .text(title); 
             }
 
             x.domain(graphData.map(function(d){
@@ -1225,7 +1981,7 @@
                 .attr("y", titleHeight+6)
                 .attr("dy", ".72em")
                 .style("text-anchor", "end")
-                .text(yAxisLabel);
+                .text("#"+yAxisField);
 
             svg.selectAll(".bar")
                 .data(graphData)
@@ -1249,6 +2005,247 @@
 
         }
 
+        function cleanPieGraph(){
+            var pieGraph = document.getElementById("pie-graph");
+                while (pieGraph.firstChild) {
+                    pieGraph.removeChild(pieGraph.firstChild);
+                }
+        }
+
+        function loadPieGraph(data,title,indexName,valueName,percentName){
+
+            var graphData=data;
+
+            var titleHeight = 0;
+            if(title!=null){
+                titleHeight = 96;
+            }
+            
+            var width = 720;
+            var height = 480;
+            var margin = {top: 48, right: 120, bottom: 0, left: 120};
+
+            var outerRadius = height / 2;
+
+            var innerRadius = 0;
+            var arc = d3.arc()
+                .innerRadius(innerRadius)
+                .outerRadius(outerRadius);
+
+            var labelArc = d3.arc()
+                .outerRadius(outerRadius-48)
+                .innerRadius(outerRadius-48)
+
+            var pie = d3.pie()
+                .value(function(d) {
+                    return d[valueName];
+                })
+                .padAngle(.01);;
+
+            var color = d3.scaleOrdinal(d3.schemeCategory20);;
+
+            var svg = d3.select("#pie-graph").append('svg')
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom + titleHeight + 20)
+            .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+                // .attr("width", width)
+                // .attr("height", height)
+                // .style("margin","80 0 20 0")
+                // .style("background-color","red");
+                // .attr("transform", "translate(" + 128 + "," + 0 + ")");
+
+            if(title!=null){
+                svg.append("text")
+                .attr("x", width/2)
+                .attr("y", 48)
+                .style("font-size", graphCaptionFontSize)
+                .attr("height",64)
+                .attr("width",320)
+                .style("fill", 'black')
+                .attr("text-anchor", 'middle')
+                .text(title);
+            }
+            
+            var mousOverCallback = function (d) {
+                d3.select("#tooltip")
+                    .style("left", d3.event.pageX-96+'px')
+                    .style("top", d3.event.pageY-96+'px')
+                    .style("opacity", 1);
+
+                d3.select("#pie-graph-tip-title")
+                    .text(d.data[indexName]);
+
+                d3.select("#pie-graph-tip-value")
+                    .text('#'+valueName+': '+d.data[valueName]);
+
+                if(percentName!=null){
+                    d3.select("#pie-graph-tip-percent")
+                    .text('Percent: '+d.data[percentName]+"%");
+                }else{
+                    d3.select("#pie-graph-tip-percent")
+                    .text("");
+                }
+            }
+            
+            var arcs = svg.selectAll("g.arc")
+                .data(pie(graphData))
+                .enter()
+                .append("g")
+                .attr("class", "arc")
+            
+                .attr("transform", "translate(" + (width/2-48)+ "," + (outerRadius+titleHeight)+ ")")
+            
+                .on("mouseover", mousOverCallback)
+                .on("mousemove", function (d) {
+
+                    d3.select("#tooltip")
+                    .style("left", d3.event.pageX-96+'px')
+                    .style("top", d3.event.pageY-96+'px')
+                    .style("display", "block");
+                })
+                
+                .on("mouseout", function () {
+                    d3.select("#tooltip")
+                    .style("display", "none");
+                });
+
+            
+            arcs.append("path")
+                .attr("fill", function (d, i) {             
+                        return color(i);
+                    })
+                .attr("d", arc);
+
+            // arcs.append("text")
+            //     .style("font-weight", "bold")
+            //     .style("color", "white")
+            //     .attr("transform", function (d) {
+            //         return "translate(" + labelArc.centroid(d) + ")";
+            //     })
+            //     .attr("text-anchor", "middle")
+            //     .text(function (d) {
+            //         return d.data.id;
+            //     });  
+
+            var legend = svg.append("g")
+                .attr("class", "legend");
+                // .attr("x", width)
+                // .attr("y", 25)
+                // .attr("height", 100)
+                // .attr("width", 100);
+
+            legend.selectAll('g').data(graphData)
+                .enter()
+                .append('g')
+                .each(function(d, i) {
+
+                    var g = d3.select(this);
+                    g.append("rect")
+                    .attr("x", width/2 + outerRadius)
+                    .attr("y", i * 25 + 36 + titleHeight)
+                    .attr("width", 16)
+                    .attr("height", 16)
+                    .style("fill", color(i));
+
+                    g.append("text")
+                    .attr("x", width/2 + outerRadius + 32)
+                    .attr("y", i * 25 + 50 + titleHeight)
+                    .style("font-size", 16)
+                    .attr("height",30)
+                    .attr("width",100)
+                    .style("fill", 'black')
+                    .text(d[indexName]);
+
+                });
+        }
+
+        function cleanWordCloudGraph(){
+            var graph = document.getElementById("word-cloud-graph");
+                while (graph.firstChild) {
+                    graph.removeChild(graph.firstChild);
+                }
+        }
+
+        function loadWordCloudGraph(data, title){
+
+            var titleHeight=0;
+            if(title!=null){
+                titleHeight = 72;
+            }          
+
+            var graphWidth = 640;
+            var graphHeight = 480;
+            // var layoutWidth = graphWidth+320;
+            // var layoutHeight = graphHeight+titleHeight;
+            var margin = {top: 48, right: 120, bottom: 0, left: 120};
+
+            var fill = d3.scaleOrdinal(d3.schemeCategory20);
+
+            var dataCopy = JSON.parse(JSON.stringify(data));
+  
+            var oldMaxSize = d3.max(dataCopy, 
+                function(d){
+                    return d.size;
+                    });
+            console.log("oldMaxSize: "+oldMaxSize);
+            var fontSizeScale = wordCloudMaxFontSize/oldMaxSize;
+            
+            var layout = d3.layout.cloud()
+                .size([graphWidth, graphHeight])
+                .words(dataCopy)
+                .padding(5)
+                .rotate(function() { return ~~(Math.random() * 2) * 90; })
+                .font("Impact")
+                .text(function(d) { 
+                    return d.text; 
+                })
+                .fontSize(function(d) { return Math.round(d.size*fontSizeScale); })
+                .on("end", draw);
+            
+            layout.start();                   
+       
+            function draw(words) {
+
+                var svg=d3.select("#word-cloud-graph").append("svg")
+                    .attr("width", graphWidth + margin.left + margin.right)
+                    .attr("height", graphHeight + margin.top + margin.bottom + titleHeight)
+                .append("g")
+                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+                // .attr("width", layoutWidth)
+                // .attr("height", layoutHeight);
+             
+                if(title!=null){
+                    svg.append("text")
+                    .attr("x", graphWidth/2)
+                    .attr("y", 32)
+                    .style("font-size", graphCaptionFontSize)
+                    .attr("height",titleHeight)
+                    .style("fill", 'black')
+                    .attr("text-anchor", 'middle')
+                    .text(title); 
+                }
+
+                svg.append("g")
+                        .attr("transform", "translate(" + graphWidth / 2 + "," + (graphHeight / 2 + titleHeight) + ")")
+                    .selectAll("text")
+                        .data(words)
+                    .enter().append("text")
+                        .style("font-size", function(d) { 
+                            return d.size + "px"; 
+                        })
+                        .style("font-family", "Impact")
+                        .style("fill", function(d, i) { return fill(i); })
+                        .attr("text-anchor", "middle")
+                        .attr("transform", function(d) {
+                            return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+                        })
+                        .text(function(d) { 
+                            return d.text;
+                        });
+            }
+        }
+
         var wrap = function(element, width) {
             var self = d3.select(element),
                 textLength = self.node().getComputedTextLength(),
@@ -1259,6 +2256,71 @@
                 textLength = self.node().getComputedTextLength();
             }
         };
+
+        function saveDataToFile(data, filename, type) {
+            var file = new Blob([data], {type: type});
+            if (window.navigator.msSaveOrOpenBlob) // IE10+
+                window.navigator.msSaveOrOpenBlob(file, filename);
+            else { // Others
+                var a = document.createElement("a"),
+                        url = URL.createObjectURL(file);
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(function() {
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);  
+                }, 0); 
+            }
+        }
+
+        function saveObjectDataToFile(content, fileName, contentType) {
+            var a = document.createElement("a");
+            var file = new Blob([content], {type: contentType});
+            a.href = URL.createObjectURL(file);
+            a.download = fileName;
+            a.click();
+        }
+
+        function getCachedSearchedData(regionId, categoryId, topicId){
+            if(cachedSearchedData==null){
+                return null;
+            }
+            if(cachedSearchedData[regionId]==null){
+                return null;
+            }
+            if(cachedSearchedData[regionId][categoryId]==null){
+                return null;
+            }
+            return cachedSearchedData[regionId][categoryId][topicId];
+        }
+        if(window.Prototype) {
+            delete Object.prototype.toJSON;
+            delete Array.prototype.toJSON;
+            delete Hash.prototype.toJSON;
+            delete String.prototype.toJSON;
+        }
+        function cacheSearchedData(searchedData, regionId, categoryId, topicId){
+            console.log("cacheSearchedData");
+
+            if(cachedSearchedData==null){
+                cachedSearchedData={};
+            }
+            if(cachedSearchedData[regionId]==null){
+                cachedSearchedData[regionId]={};
+            }
+            if(cachedSearchedData[regionId][categoryId]==null){
+                cachedSearchedData[regionId][categoryId]={};
+            }
+            
+            cachedSearchedData[regionId][categoryId][topicId]=searchedData;
+            console.log(cachedSearchedData);
+        }
+
+        function saveCachedSearchedDataToFile(){
+            saveObjectDataToFile(JSON.stringify(cachedSearchedData),cachedSearchedDataFilename,'text/plain');
+        }
 
         $(".arrow-right").bind("click", function (event) {
             event.preventDefault();

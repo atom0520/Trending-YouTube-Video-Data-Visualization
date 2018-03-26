@@ -52,30 +52,39 @@ function urlExists(url)
         console.log("'"+url+"' file doesn't exist!")
         return false;
     }
-    
 }
 
 function loadCategoryData(callback){
-    // console.log("loadCategoryData");
+
+    if(categoryMap!=null){
+        if(callback!=null){
+            callback();
+        }
+    }
+
     d3.json(categoryDataFilename, function(root) {
 
         var categoryItems = root.items;
 
-        categoryMap={};
+        temp = {};
         for(var i=0;i<categoryItems.length;i+=1){
             var categoryId = categoryItems[i].id;
             var categoryTitle = categoryItems[i].snippet.title;
-            categoryMap[categoryId]={};
-            categoryMap[categoryId].title = categoryTitle;
-            categoryMap[categoryId].video_num = 0;
-            categoryMap[categoryId].views = 0;
+            temp[categoryId]={};
+            temp[categoryId].title = categoryTitle;
+            temp[categoryId].video_num = 0;
+            temp[categoryId].views = 0;
         }
+
+        categoryMap=temp;
 
         if(callback!=null){
             callback();
         }
     });
 }
+
+
 
 function includeOrNot(idSet,id){
     var included = false;
@@ -134,7 +143,6 @@ function getMostViewedVideos(callback){
         return;
     }
 
-    
     dataSorted = videoData.slice(0)
     dataSorted.sort(
         function(a,b){
